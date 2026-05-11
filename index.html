@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IQA-Fácil · Qualidade da Água</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root {
+  --bg:#f0ede8;--surface:#fff;--surface2:#f7f5f2;--border:#ddd9d0;
+  --text:#1c1b18;--muted:#7a7670;--accent:#1a5c38;--accent2:#e8f3ed;
+  --blue:#0d4275;--sans:'Space Grotesk',sans-serif;--mono:'JetBrains Mono',monospace;
+  --ot:#1b6e2e;--bo:#0d4275;--ra:#b07d00;--ru:#c04a00;--mr:#a01515;--r:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;}
+nav{background:var(--accent);color:#fff;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:54px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.2);}
+.nb{display:flex;align-items:center;gap:10px;}
+.nb .dot{width:10px;height:10px;background:#6ed89a;border-radius:50%;}
+.nb h1{font-size:16px;font-weight:700;}
+.nb span{font-size:11px;color:rgba(255,255,255,.55);}
+.nt{display:flex;gap:4px;}
+.nt button{padding:6px 13px;border-radius:5px;font-size:13px;font-weight:500;cursor:pointer;color:rgba(255,255,255,.7);border:none;background:none;transition:.15s;}
+.nt button:hover{background:rgba(255,255,255,.12);color:#fff;}
+.nt button.active{background:rgba(255,255,255,.18);color:#fff;}
+.page{display:none;max-width:1080px;margin:0 auto;padding:26px 18px 60px;}
+.page.active{display:block;}
+.stitle{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.stitle::after{content:'';flex:1;height:1px;background:var(--border);}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.ch{background:var(--surface2);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:9px;}
+.ch .ico{width:28px;height:28px;background:var(--accent);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.ch h2{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--accent);}
+.cb{padding:16px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+@media(max-width:680px){.g2{grid-template-columns:1fr;}}
+.prow{margin-bottom:12px;}
+.ptop{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;}
+.ptop label{font-size:12px;font-weight:600;}
+.utag{font-family:var(--mono);font-size:10px;color:var(--muted);}
+.wtag{font-family:var(--mono);font-size:10px;background:var(--accent2);color:var(--accent);padding:1px 7px;border-radius:10px;border:1px solid #b8d8c4;margin-left:5px;}
+.ib{position:relative;}
+.ib input{width:100%;padding:8px 68px 8px 11px;font-family:var(--mono);font-size:14px;border:1.5px solid var(--border);border-radius:5px;background:#fafaf8;color:var(--text);outline:none;transition:.15s;}
+.ib input:focus{border-color:var(--accent);background:#fff;}
+.ib input.err{border-color:#c0392b;background:#fff5f5;}
+.qp{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:11px;font-weight:600;padding:2px 7px;border-radius:10px;background:#eee;opacity:0;transition:.2s;pointer-events:none;}
+.qp.show{opacity:1;}
+.btn{padding:10px 20px;border:none;border-radius:5px;cursor:pointer;font-family:var(--sans);font-weight:700;font-size:13px;transition:.15s;}
+.bprim{background:var(--accent);color:#fff;}
+.bprim:hover{background:#0f3d24;}
+.bsec{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
+.bsec:hover{background:#eee;}
+.bblue{background:var(--blue);color:#fff;}
+.bblue:hover{background:#093060;}
+.bsm{padding:7px 13px;font-size:12px;}
+.brow{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+/* RESULT */
+.hero{padding:28px 18px;text-align:center;transition:background .3s;}
+.iqanum{font-family:var(--mono);font-size:76px;font-weight:600;line-height:1;letter-spacing:-2px;transition:color .3s;}
+.iqacl{font-size:20px;font-weight:700;margin-top:5px;transition:color .3s;}
+.iqafm{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:6px;}
+.iqadt{font-size:11px;color:var(--muted);margin-top:3px;}
+.fbar{display:grid;grid-template-columns:repeat(5,1fr);}
+.fc{padding:18px 6px;text-align:center;font-size:14px;font-weight:700;color:#fff;transition:.25s;position:relative;}
+.fc.dim{opacity:.22;filter:saturate(.4);}
+.fc .rng{display:block;font-family:var(--mono);font-size:11px;margin-top:4px;opacity:.9;}
+.fc:not(.dim){transform:scaleY(1.12);z-index:2;}
+.fot{background:var(--ot);}.fbo{background:var(--bo);}.fra{background:var(--ra);}.fru{background:var(--ru);}.fmr{background:var(--mr);}
+/* TABS */
+.itabs{display:flex;gap:4px;margin-bottom:14px;border-bottom:2px solid var(--border);padding-bottom:0;}
+.itab{padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-2px;transition:.15s;}
+.itab.active{color:var(--accent);border-bottom-color:var(--accent);}
+/* TABLES */
+.qt{width:100%;border-collapse:collapse;font-size:12px;}
+.qt th{background:var(--surface2);font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.4px;padding:6px 9px;border:1px solid var(--border);color:var(--muted);}
+.qt td{padding:7px 9px;border:1px solid #eee;font-family:var(--mono);font-size:12px;vertical-align:middle;}
+.qt tr:hover td{background:#fafaf8;}
+.bb{height:8px;background:#eee;border-radius:4px;overflow:hidden;width:72px;}
+.bf{height:100%;border-radius:4px;}
+.ct{width:100%;border-collapse:collapse;font-size:12px;}
+.ct th{background:var(--accent);color:#fff;font-size:10px;text-transform:uppercase;letter-spacing:.4px;padding:7px 10px;text-align:left;}
+.ct td{padding:7px 10px;border-bottom:1px solid #eee;font-size:12px;}
+.ct tr:hover td{background:#fafaf8;}
+.cbadge{display:inline-block;padding:2px 8px;border-radius:10px;font-family:var(--mono);font-size:10px;font-weight:600;color:#fff;}
+.sok{background:#1b6e2e;}.sal{background:#b07d00;}.svi{background:#a01515;}.sna{background:#999;}
+/* HIST */
+.hi{display:grid;grid-template-columns:14px 1fr auto auto;align-items:center;gap:11px;padding:9px 12px;border:1px solid var(--border);border-radius:6px;margin-bottom:7px;background:#fff;transition:.15s;cursor:pointer;}
+.hi:hover{border-color:var(--accent);background:var(--accent2);}
+.hdot{width:14px;height:14px;border-radius:50%;}
+.hn .nm{font-size:13px;font-weight:600;}
+.hn .dt{font-size:11px;color:var(--muted);font-family:var(--mono);}
+.hiqa{font-family:var(--mono);font-size:17px;font-weight:600;}
+.hcl{font-size:11px;font-weight:600;color:var(--muted);}
+.hdel{background:none;border:none;cursor:pointer;color:#ccc;font-size:15px;padding:4px;transition:.15s;}
+.hdel:hover{color:#c0392b;}
+.empt{text-align:center;padding:40px;color:var(--muted);font-size:13px;}
+/* ALERT */
+.alert{background:#fff8e1;border:1px solid #ffe082;border-left:4px solid #f9a825;border-radius:4px;padding:9px 13px;font-size:12px;color:#5d4037;margin-top:9px;display:none;}
+.alert.show{display:block;}
+/* MODAL */
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;}
+.mo.show{display:flex;}
+.md{background:#fff;border-radius:10px;padding:26px;max-width:500px;width:92%;box-shadow:0 20px 60px rgba(0,0,0,.25);}
+.md h3{font-size:15px;font-weight:700;margin-bottom:5px;}
+.md p{font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.6;}
+.md input,.md select{width:100%;padding:8px 11px;font-family:var(--sans);font-size:13px;border:1.5px solid var(--border);border-radius:5px;outline:none;margin-bottom:9px;}
+.md input:focus{border-color:var(--accent);}
+.mbr{display:flex;gap:9px;margin-top:4px;}
+/* LAUDO */
+#lc{background:#fff;padding:28px;font-family:var(--sans);font-size:12px;line-height:1.7;max-width:680px;margin:0 auto;}
+.lh{border-bottom:3px solid var(--accent);padding-bottom:14px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:flex-start;}
+.lt{font-size:17px;font-weight:700;color:var(--accent);}
+.ls{font-size:11px;color:var(--muted);margin-top:3px;}
+.lsec{margin-bottom:16px;}
+.lsec h3{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent);border-bottom:1px solid var(--border);padding-bottom:3px;margin-bottom:8px;}
+.lgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.lf strong{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);}
+.lf{font-size:12px;}
+.liqab{text-align:center;padding:14px;border:2px solid;border-radius:8px;margin:12px 0;}
+.liqan{font-size:44px;font-weight:700;font-family:var(--mono);}
+.lft{border-top:1px solid var(--border);padding-top:10px;font-size:10px;color:var(--muted);margin-top:16px;}
+/* LAUDO modal oversize */
+#modal-laudo .md{max-width:740px;max-height:90vh;overflow-y:auto;}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nb"><div class="dot"></div><div><h1>IQA-Fácil</h1><span>NSF/CETESB · Brown et al. 1970</span></div></div>
+  <div class="nt">
+    <button class="active" onclick="goPage('calcular',this)">Calcular</button>
+    <button onclick="goPage('historico',this)">Histórico</button>
+    <button onclick="goPage('sobre',this)">Sobre</button>
+  </div>
+</nav>
+
+<!-- CALCULAR -->
+<div class="page active" id="page-calcular">
+  <div class="g2">
+    <div class="card">
+      <div class="ch"><div class="ico">⬡</div><h2>Parâmetros de Entrada</h2></div>
+      <div class="cb">
+        <div id="pc"></div>
+        <div class="alert show" id="alert-campos" style="display:block;background:#e8f3ed;border-color:#b8d8c4;border-left-color:var(--accent);color:var(--accent);">
+          Preencha os 9 parâmetros e clique em <strong>Calcular IQA</strong>.
+        </div>
+        <div style="margin-top:13px;display:flex;gap:9px;">
+          <button class="btn bprim" style="flex:1" onclick="calcularIQA()">▶ Calcular IQA</button>
+          <button class="btn bsec bsm" onclick="limpar()" title="Limpar campos">✕</button>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card" id="rph">
+        <div class="ch"><div class="ico">◎</div><h2>Resultado</h2></div>
+        <div class="cb" style="text-align:center;padding:40px;color:var(--muted);font-size:13px;">Preencha os parâmetros e calcule.</div>
+      </div>
+      <div class="card" id="rm" style="display:none;">
+        <div class="hero" id="hero">
+          <div class="iqanum" id="iqan">—</div>
+          <div class="iqacl" id="iqacl">—</div>
+          <div class="iqafm" id="iqafm"></div>
+          <div class="iqadt" id="iqadt"></div>
+        </div>
+        <div class="fbar">
+          <div class="fc fot dim" id="f-ot">Ótima<span class="rng">79–100</span></div>
+          <div class="fc fbo dim" id="f-bo">Boa<span class="rng">51–79</span></div>
+          <div class="fc fra dim" id="f-ra">Razoável<span class="rng">36–51</span></div>
+          <div class="fc fru dim" id="f-ru">Ruim<span class="rng">20–36</span></div>
+          <div class="fc fmr dim" id="f-mr">M.Ruim<span class="rng">0–20</span></div>
+        </div>
+        <div class="cb">
+          <div class="itabs">
+            <div class="itab active" onclick="stab('si',this)">Subíndices qi</div>
+            <div class="itab" onclick="stab('cn',this)">CONAMA 357/2005</div>
+          </div>
+          <div id="tab-si">
+            <table class="qt"><thead><tr><th>Parâmetro</th><th>Valor</th><th>qi</th><th>wi</th><th>qi^wi</th><th>Barra</th></tr></thead>
+            <tbody id="qib"></tbody></table>
+          </div>
+          <div id="tab-cn" style="display:none;">
+            <table class="ct"><thead><tr><th>Parâmetro</th><th>Medido</th><th>CONAMA Cl.2</th><th>CONAMA Cl.3</th><th>Status Cl.2</th></tr></thead>
+            <tbody id="cnb"></tbody></table>
+            <p style="font-size:10px;color:var(--muted);margin-top:8px;">CONAMA 357/2005 — Águas doces. Parâmetros sem limite explícito: N/A.</p>
+          </div>
+          <div class="brow">
+            <button class="btn bsec bsm" onclick="abrirSalvar()">💾 Salvar Histórico</button>
+            <button class="btn bsec bsm" onclick="exportImg()">🖼 Exportar Imagem</button>
+            <button class="btn bblue bsm" onclick="gerarLaudo()">📄 Gerar Laudo</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HISTÓRICO -->
+<div class="page" id="page-historico">
+  <div class="stitle">Histórico de Medições</div>
+  <div style="background:#fff8e1;border:1px solid #ffe082;border-left:4px solid #f9a825;border-radius:6px;padding:11px 16px;margin-bottom:16px;font-size:12px;color:#5d4037;line-height:1.6;">
+    ⚠ <strong>Atenção:</strong> O histórico é salvo apenas <strong>neste navegador e neste dispositivo</strong> (armazenamento local). Não sincroniza com outros computadores nem celulares, e pode ser perdido se o cache do navegador for limpo. <strong>Exporte o CSV regularmente</strong> para guardar seus dados com segurança.
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="ch"><div class="ico">📋</div><h2>Medições Salvas</h2></div>
+      <div class="cb">
+        <div id="hl"></div>
+        <button class="btn bsec bsm" onclick="exportCSV()" style="margin-top:10px;">⬇ Exportar CSV</button>
+      </div>
+    </div>
+    <div class="card" style="padding:16px;">
+      <div class="ch" style="border:none;background:none;padding:0 0 12px;"><div class="ico">📈</div><h2>Evolução Temporal</h2></div>
+      <canvas id="chart" height="210"></canvas>
+      <p style="font-size:10px;color:var(--muted);text-align:center;margin-top:6px;">Mínimo 2 medições para exibir o gráfico.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SOBRE -->
+<div class="page" id="page-sobre">
+  <div class="g2">
+    <div class="card">
+      <div class="ch"><div class="ico">📐</div><h2>Base Científica</h2></div>
+      <div class="cb" style="font-size:13px;line-height:1.8;color:var(--muted);">
+        <p><strong style="color:var(--text)">Fórmula</strong><br>IQA = ∏ qi<sup>wi</sup> — média geométrica ponderada. ∑wi = 1,00.</p><br>
+        <p><strong style="color:var(--text)">Curvas qi</strong><br>Subíndice qi (0–100) obtido por interpolação linear nos pontos tabelados das curvas originais de Brown et al. (1970), adotadas pelo CETESB.</p><br>
+        <p><strong style="color:var(--text)">OD — saturação</strong><br>OD convertido para % saturação usando 9,08 mg/L a 20°C e 1 atm (padrão CETESB).</p><br>
+        <p><strong style="color:var(--text)">Referências</strong><br>Brown, R.M. et al. (1970). <em>Water & Sewage Works</em>, 117(10), 339–343.<br>CETESB (2021). Qualidade das Águas Superficiais — SP. ISSN 0103-4103.<br>CONAMA Res. 357/2005.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ico">⚖</div><h2>Pesos wi</h2></div>
+      <div class="cb">
+        <table class="qt"><thead><tr><th>Parâmetro</th><th>wi</th><th>Peso visual</th></tr></thead>
+        <tbody id="ptb"></tbody></table>
+        <br>
+        <div style="background:var(--accent2);border:1px solid #b8d8c4;border-radius:6px;padding:12px;font-size:12px;line-height:1.6;color:var(--accent);">
+          <strong>PI:</strong> O algoritmo IQA é domínio público. Este software — interface, histórico, comparação normativa, laudo e visualização temporal — é obra intelectual original registrável pela Lei 9.609/1998.
+        </div>
+        <br>
+        <div style="background:#f7f5f2;border:1px solid var(--border);border-radius:6px;padding:14px;font-size:12px;line-height:1.8;color:var(--text);">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:8px;">Autoria</div>
+          Desenvolvido por <strong>Ernandes Sobreira Oliveira Junior</strong> e <strong>Wilkinson Lopes Lazaro</strong><br>
+          <span style="color:var(--muted);">Universidade do Estado de Mato Grosso — UNEMAT</span><br>
+          <span style="font-family:var(--mono);font-size:11px;color:var(--accent);">PPGCA · PROFÁGUA</span><br><br>
+          <span style="font-size:11px;color:var(--muted);">Finalidade: educacional e de gestão dos recursos hídricos.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SALVAR -->
+<div class="mo" id="ms">
+  <div class="md">
+    <h3>💾 Salvar Medição</h3>
+    <p>Adicione local e data para o registro histórico.</p>
+    <input id="sv-local" placeholder="Local / Ponto (ex: Rio Paraguai — Cáceres)">
+    <input id="sv-resp" placeholder="Responsável / Técnico (opcional)">
+    <input type="datetime-local" id="sv-data">
+    <input id="sv-obs" placeholder="Observações (opcional)">
+    <div class="mbr">
+      <button class="btn bprim" onclick="confirmarSalvar()">Salvar</button>
+      <button class="btn bsec" onclick="fecharMo('ms')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL LAUDO -->
+<div class="mo" id="modal-laudo">
+  <div class="md" style="max-width:740px;max-height:90vh;overflow-y:auto;">
+    <div id="lc">
+      <div class="lh">
+        <div><div class="lt">Laudo de Qualidade da Água</div><div class="ls">IQA — Método NSF/CETESB · Brown et al. (1970)</div></div>
+        <div style="text-align:right;font-size:10px;color:var(--muted);font-family:var(--mono);" id="ldt"></div>
+      </div>
+      <div class="lsec"><h3>Identificação</h3><div class="lgrid" id="lid"></div></div>
+      <div class="lsec"><h3>Resultado</h3>
+        <div class="liqab" id="liab">
+          <div class="liqan" id="liqn"></div>
+          <div id="licl" style="font-size:15px;font-weight:700;margin-top:3px;"></div>
+          <div id="lifm" style="font-size:10px;margin-top:5px;opacity:.7;font-family:var(--mono);"></div>
+        </div>
+      </div>
+      <div class="lsec"><h3>Subíndices qi</h3>
+        <table class="qt" style="font-size:11px;"><thead><tr><th>Parâmetro</th><th>Valor</th><th>Unidade</th><th>qi</th><th>wi</th></tr></thead>
+        <tbody id="lqib"></tbody></table>
+      </div>
+      <div class="lsec"><h3>Conformidade CONAMA 357/2005</h3>
+        <table class="ct" style="font-size:11px;"><thead><tr><th>Parâmetro</th><th>Medido</th><th>Cl.2</th><th>Cl.3</th><th>Status</th></tr></thead>
+        <tbody id="lcnb"></tbody></table>
+      </div>
+      <div class="lft">
+        <strong>Metodologia:</strong> Brown et al. (1970). Water &amp; Sewage Works, 117(10). Adotado CETESB.<br>
+        <strong>Referência legal:</strong> CONAMA Res. 357/2005.<br>
+        <strong>Software:</strong> IQA-Fácil · Gerado em <span id="lft2"></span>
+      </div>
+    </div>
+    <div class="mbr" style="margin-top:14px;">
+      <button class="btn bblue" onclick="imprimirLaudo()">🖨 Imprimir / PDF</button>
+      <button class="btn bsec bsm" onclick="exportImgLaudo()">🖼 Imagem</button>
+      <button class="btn bsec" onclick="fecharMo('modal-laudo')">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const CURVAS={
+  oxigenio:{p:[[0,2],[5,5],[10,8],[20,16],[30,28],[40,40],[50,52],[60,64],[70,76],[80,86],[90,94],[100,100],[110,98],[120,92],[130,84],[140,76],[150,66],[160,56],[170,44],[180,30],[190,18],[200,8]],m:'sat'},
+  coliformes:{p:[[0,100],[1,98],[10,88],[100,72],[1000,52],[10000,32],[100000,16],[1000000,6],[10000000,2]],m:'log'},
+  ph:{p:[[2,0],[3,4],[4,16],[5,38],[6,68],[6.5,80],[7,92],[7.5,92],[8,84],[8.5,72],[9,52],[10,32],[11,14],[12,4],[13,0]],m:'lin'},
+  dbo:{p:[[0,100],[1,98],[2,94],[4,84],[6,72],[8,58],[10,46],[15,28],[20,16],[30,8],[50,4]],m:'lin'},
+  temperatura:{p:[[0,93],[1,88],[2,82],[3,76],[4,68],[5,60],[6,52],[7,44],[8,36],[9,28],[10,20],[12,14],[15,8],[20,4]],m:'lin'},
+  nitrogenio:{p:[[0,100],[0.5,96],[1,88],[2,76],[4,56],[6,40],[8,28],[10,18],[15,10],[20,6],[30,2]],m:'lin'},
+  fosforo:{p:[[0,100],[0.1,96],[0.2,90],[0.5,78],[1,62],[2,46],[3,32],[5,18],[10,8],[20,4]],m:'lin'},
+  turbidez:{p:[[0,100],[1,96],[5,86],[10,76],[20,62],[40,46],[60,34],[80,24],[100,16],[200,8],[400,4]],m:'lin'},
+  solidos:{p:[[0,90],[100,79],[200,68],[400,50],[600,34],[800,22],[1000,14],[1200,8],[1400,4]],m:'lin'}
+};
+const PESOS={
+  oxigenio:   {w:0.17,lb:'Oxigênio Dissolvido',        un:'mg/L',        ph:'ex: 8.0'},
+  coliformes: {w:0.15,lb:'Coliformes Termotolerantes', un:'NMP/100mL',   ph:'ex: 1000'},
+  ph:         {w:0.12,lb:'pH',                         un:'adimensional',ph:'ex: 7.2'},
+  dbo:        {w:0.10,lb:'DBO₅',                       un:'mg/L O₂',     ph:'ex: 3.0'},
+  temperatura:{w:0.10,lb:'Variação de Temperatura',    un:'°C (|ΔT|)',   ph:'ex: 2.0'},
+  nitrogenio: {w:0.10,lb:'Nitrogênio Total',           un:'mg/L',        ph:'ex: 1.0'},
+  fosforo:    {w:0.10,lb:'Fósforo Total',              un:'mg/L',        ph:'ex: 0.1'},
+  turbidez:   {w:0.08,lb:'Turbidez',                   un:'UNT',         ph:'ex: 10'},
+  solidos:    {w:0.08,lb:'Sólidos Totais',             un:'mg/L',        ph:'ex: 200'}
+};
+const CONAMA={
+  ph:         {cl2:[6,9],  cl3:[6,9],  t:'rng',lb:'pH'},
+  dbo:        {cl2:5,      cl3:10,     t:'max',lb:'DBO₅ (mg/L)'},
+  oxigenio:   {cl2:5,      cl3:4,      t:'min',lb:'OD (mg/L)'},
+  coliformes: {cl2:1000,   cl3:2500,   t:'max',lb:'Colif. Termotol. (NMP/100mL)'},
+  fosforo:    {cl2:0.1,    cl3:0.15,   t:'max',lb:'Fósforo Total (mg/L)'},
+  nitrogenio: {cl2:null,   cl3:null,   t:'na', lb:'Nitrogênio Total'},
+  turbidez:   {cl2:100,    cl3:null,   t:'max',lb:'Turbidez (UNT)'},
+  temperatura:{cl2:null,   cl3:null,   t:'na', lb:'Variação Temperatura'},
+  solidos:    {cl2:500,    cl3:500,    t:'max',lb:'Sólidos Totais (mg/L)'}
+};
+const OD_SAT=9.08;
+let last=null;
+let hist=JSON.parse(localStorage.getItem('iqaf-h')||'[]');
+
+function itp(pts,x){
+  if(x<=pts[0][0])return pts[0][1];
+  if(x>=pts[pts.length-1][0])return pts[pts.length-1][1];
+  for(let i=0;i<pts.length-1;i++){
+    if(x>=pts[i][0]&&x<=pts[i+1][0]){
+      const r=(x-pts[i][0])/(pts[i+1][0]-pts[i][0]);
+      return pts[i][1]+r*(pts[i+1][1]-pts[i][1]);
+    }
+  }
+  return pts[pts.length-1][1];
+}
+function cqi(k,v){
+  const c=CURVAS[k];
+  if(c.m==='sat') return Math.max(0,Math.min(100,itp(c.p,(v/OD_SAT)*100)));
+  if(c.m==='log'){
+    const x=Math.max(v,0.001);
+    const lp=c.p.map(pt=>[Math.log10(Math.max(pt[0],0.001)),pt[1]]);
+    return Math.max(0,Math.min(100,itp(lp,Math.log10(x))));
+  }
+  return Math.max(0,Math.min(100,itp(c.p,v)));
+}
+function cor(v){if(v>=79)return'#1b6e2e';if(v>=51)return'#0d4275';if(v>=36)return'#b07d00';if(v>=20)return'#c04a00';return'#a01515';}
+function cl(v){
+  if(v>=79)return{lb:'ÓTIMA',id:'f-ot'};if(v>=51)return{lb:'BOA',id:'f-bo'};
+  if(v>=36)return{lb:'RAZOÁVEL',id:'f-ra'};if(v>=20)return{lb:'RUIM',id:'f-ru'};
+  return{lb:'MUITO RUIM',id:'f-mr'};
+}
+
+function renderInputs(){
+  const pc=document.getElementById('pc'), ptb=document.getElementById('ptb');
+  pc.innerHTML=''; ptb.innerHTML='';
+  Object.entries(PESOS).forEach(([k,m])=>{
+    pc.innerHTML+=`<div class="prow">
+      <div class="ptop"><label>${m.lb}</label>
+      <span><span class="utag">${m.un}</span><span class="wtag">wi=${m.w.toFixed(2)}</span></span></div>
+      <div class="ib"><input type="number" id="i-${k}" step="any" min="0" placeholder="${m.ph}" oninput="prvw('${k}')">
+      <span class="qp" id="p-${k}"></span></div></div>`;
+    const bw=(m.w/0.17)*100;
+    ptb.innerHTML+=`<tr><td>${m.lb}</td><td style="font-family:var(--mono)">${m.w.toFixed(2)}</td>
+      <td><div class="bb" style="width:110px"><div class="bf" style="width:${bw}%;background:var(--accent)"></div></div></td></tr>`;
+  });
+  document.getElementById('sv-data').value=new Date().toISOString().slice(0,16);
+}
+function prvw(k){
+  const inp=document.getElementById(`i-${k}`),pill=document.getElementById(`p-${k}`);
+  const v=parseFloat(inp.value);
+  if(!isNaN(v)&&v>=0){
+    const q=cqi(k,v);pill.textContent=`qi=${q.toFixed(0)}`;
+    pill.style.background=cor(q)+'22';pill.style.color=cor(q);pill.classList.add('show');
+    inp.classList.remove('err');
+  } else pill.classList.remove('show');
+}
+function calcularIQA(){
+  const al=document.getElementById('alert-campos');
+  al.style.background='#fff8e1';al.style.borderLeftColor='#f9a825';al.style.color='#5d4037';
+  al.textContent='⚠ Preencha todos os 9 parâmetros antes de calcular.';al.classList.remove('show');
+  const v={};let err=false;
+  Object.keys(PESOS).forEach(k=>{
+    const x=parseFloat(document.getElementById(`i-${k}`).value);
+    if(isNaN(x)||x<0){document.getElementById(`i-${k}`).classList.add('err');err=true;}
+    else{document.getElementById(`i-${k}`).classList.remove('err');v[k]=x;}
+  });
+  if(err){al.style.background='#fff8e1';al.style.borderLeftColor='#f9a825';al.style.color='#5d4037';al.textContent='⚠ Preencha todos os 9 parâmetros antes de calcular.';al.classList.add('show');return;}
+
+  let iqa=1;const qis={};
+  Object.entries(PESOS).forEach(([k,m])=>{const q=cqi(k,v[k]);qis[k]=q;iqa*=Math.pow(q,m.w);});
+  last={iqa,qis,vals:v,ts:new Date().toISOString()};
+
+  const C=cl(iqa),CR=cor(iqa);
+  document.getElementById('iqan').textContent=iqa.toFixed(1);
+  document.getElementById('iqan').style.color=CR;
+  document.getElementById('iqacl').textContent=C.lb;
+  document.getElementById('iqacl').style.color=CR;
+  document.getElementById('iqafm').textContent=`IQA = ∏ qi^wi = ${iqa.toFixed(3)} · Média geométrica ponderada`;
+  document.getElementById('iqadt').textContent=new Date().toLocaleString('pt-BR');
+  document.getElementById('hero').style.background=`linear-gradient(135deg,${CR}08,${CR}1a)`;
+
+  // faixas
+  ['f-ot','f-bo','f-ra','f-ru','f-mr'].forEach(id=>{
+    const el=document.getElementById(id);el.classList.add('dim');el.style.boxShadow='';
+  });
+  const fa=document.getElementById(C.id);
+  fa.classList.remove('dim');fa.style.boxShadow='inset 0 -5px 0 rgba(0,0,0,0.3)';
+
+  // qi table
+  const qib=document.getElementById('qib');qib.innerHTML='';
+  Object.entries(PESOS).forEach(([k,m])=>{
+    const q=qis[k],c2=cor(q),ct=Math.pow(q,m.w);
+    qib.innerHTML+=`<tr><td>${m.lb}</td><td>${v[k]}</td>
+      <td style="color:${c2};font-weight:700">${q.toFixed(1)}</td>
+      <td>${m.w.toFixed(2)}</td><td>${ct.toFixed(3)}</td>
+      <td><div class="bb"><div class="bf" style="width:${q}%;background:${c2}"></div></div></td></tr>`;
+  });
+
+  // CONAMA
+  renderCONAMA(v, document.getElementById('cnb'));
+  renderCONAMA(v, document.getElementById('lcnb'));
+
+  document.getElementById('rph').style.display='none';
+  document.getElementById('rm').style.display='block';
+  document.getElementById('rm').scrollIntoView({behavior:'smooth',block:'nearest'});
+
+  al.style.background='#e8f3ed';al.style.borderLeftColor='var(--accent)';al.style.color='var(--accent)';
+  al.textContent='✓ IQA calculado. Use os botões abaixo para salvar, exportar ou gerar laudo.';al.classList.add('show');
+}
+
+function renderCONAMA(vals,tbody){
+  tbody.innerHTML='';
+  Object.entries(CONAMA).forEach(([k,c])=>{
+    const vl=vals[k];let c2='—',c3='—',st='',bd='';
+    if(c.t==='max'){
+      c2=c.cl2!=null?`≤${c.cl2}`:'N/A';c3=c.cl3!=null?`≤${c.cl3}`:'N/A';
+      if(c.cl2!=null){if(vl<=c.cl2){st='Conforme Cl.2';bd='sok';}else if(c.cl3!=null&&vl<=c.cl3){st='Violação Cl.2';bd='sal';}else{st='Violação Cl.3';bd='svi';}}
+      else{st='N/A';bd='sna';}
+    }else if(c.t==='min'){
+      c2=c.cl2!=null?`≥${c.cl2}`:'N/A';c3=c.cl3!=null?`≥${c.cl3}`:'N/A';
+      if(c.cl2!=null){if(vl>=c.cl2){st='Conforme Cl.2';bd='sok';}else if(c.cl3!=null&&vl>=c.cl3){st='Violação Cl.2';bd='sal';}else{st='Violação Cl.3';bd='svi';}}
+      else{st='N/A';bd='sna';}
+    }else if(c.t==='rng'){
+      c2=`${c.cl2[0]}–${c.cl2[1]}`;c3=`${c.cl3[0]}–${c.cl3[1]}`;
+      st=vl>=c.cl2[0]&&vl<=c.cl2[1]?'Conforme Cl.2':'Fora da faixa';bd=vl>=c.cl2[0]&&vl<=c.cl2[1]?'sok':'svi';
+    }else{st='N/A';bd='sna';}
+    tbody.innerHTML+=`<tr><td>${c.lb}</td><td style="font-family:var(--mono);font-weight:600">${vl}</td>
+      <td style="font-family:var(--mono)">${c2}</td><td style="font-family:var(--mono)">${c3}</td>
+      <td><span class="cbadge ${bd}">${st}</span></td></tr>`;
+  });
+}
+
+function stab(n,el){
+  document.getElementById('tab-si').style.display='none';
+  document.getElementById('tab-cn').style.display='none';
+  document.querySelectorAll('.itab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+n).style.display='block';el.classList.add('active');
+}
+
+function abrirSalvar(){if(!last){alert('Calcule o IQA primeiro.');return;}document.getElementById('ms').classList.add('show');}
+function fecharMo(id){document.getElementById(id).classList.remove('show');}
+function confirmarSalvar(){
+  const local=document.getElementById('sv-local').value||'Ponto não informado';
+  const resp=document.getElementById('sv-resp').value||'';
+  const data=document.getElementById('sv-data').value||new Date().toISOString().slice(0,16);
+  const obs=document.getElementById('sv-obs').value||'';
+  hist.unshift({...last,local,resp,data,obs,id:Date.now()});
+  localStorage.setItem('iqaf-h',JSON.stringify(hist));
+  fecharMo('ms');renderHist();alert(`✅ Medição salva: ${local}`);
+}
+
+function renderHist(){
+  const hl=document.getElementById('hl');
+  if(hist.length===0){hl.innerHTML='<div class="empt">Nenhuma medição salva ainda.<br>Calcule o IQA e clique em <strong>Salvar Histórico</strong>.</div>';desenharChart();return;}
+  hl.innerHTML='';
+  hist.forEach(h=>{
+    const C=cl(h.iqa),CR=cor(h.iqa);
+    const df=new Date(h.data).toLocaleString('pt-BR');
+    hl.innerHTML+=`<div class="hi">
+      <div class="hdot" style="background:${CR}"></div>
+      <div class="hn"><div class="nm">${h.local}</div><div class="dt">${df}${h.resp?' · '+h.resp:''}</div></div>
+      <div><div class="hiqa" style="color:${CR}">${h.iqa.toFixed(1)}</div><div class="hcl" style="color:${CR}">${C.lb}</div></div>
+      <button class="hdel" onclick="delHist(${h.id})">✕</button></div>`;
+  });
+  desenharChart();
+}
+function delHist(id){
+  if(!confirm('Remover medição?'))return;
+  hist=hist.filter(h=>h.id!==id);localStorage.setItem('iqaf-h',JSON.stringify(hist));renderHist();
+}
+function exportCSV(){
+  if(hist.length===0){alert('Nenhuma medição salva.');return;}
+  let csv='Local,Data,Responsavel,IQA,Classe,OD,Coliformes,pH,DBO,Temperatura,Nitrogenio,Fosforo,Turbidez,Solidos\n';
+  hist.forEach(h=>{
+    const C=cl(h.iqa).lb,v=h.vals;
+    csv+=`"${h.local}","${h.data}","${h.resp||''}",${h.iqa.toFixed(2)},${C},${v.oxigenio},${v.coliformes},${v.ph},${v.dbo},${v.temperatura},${v.nitrogenio},${v.fosforo},${v.turbidez},${v.solidos}\n`;
+  });
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='iqa-historico.csv';a.click();
+}
+
+function desenharChart(){
+  const cv=document.getElementById('chart'),ctx=cv.getContext('2d');
+  const W=cv.offsetWidth||580,H=210;cv.width=W;cv.height=H;ctx.clearRect(0,0,W,H);
+  if(hist.length<2){
+    ctx.fillStyle='#aaa';ctx.font='12px Space Grotesk';ctx.textAlign='center';
+    ctx.fillText('Adicione ao menos 2 medições para exibir o gráfico',W/2,H/2);return;
+  }
+  const d=[...hist].reverse();
+  const pd={l:44,r:14,t:16,b:46};const cw=W-pd.l-pd.r,ch=H-pd.t-pd.b;
+  const n=d.length;
+  const xs=i=>pd.l+(i/(n-1))*cw;
+  const ys=v=>pd.t+ch-(v/100)*ch;
+  // bg faixas
+  [[79,100,'#1b6e2e'],[51,79,'#0d4275'],[36,51,'#b07d00'],[20,36,'#c04a00'],[0,20,'#a01515']].forEach(([mn,mx,c])=>{
+    ctx.fillStyle=c+'15';ctx.fillRect(pd.l,ys(mx),cw,ys(mn)-ys(mx));
+  });
+  // grid
+  ctx.strokeStyle='#ddd';ctx.lineWidth=1;
+  [0,20,36,51,79,100].forEach(v=>{
+    ctx.beginPath();ctx.moveTo(pd.l,ys(v));ctx.lineTo(pd.l+cw,ys(v));ctx.stroke();
+    ctx.fillStyle='#999';ctx.font='9px JetBrains Mono';ctx.textAlign='right';ctx.fillText(v,pd.l-5,ys(v)+3);
+  });
+  // linha
+  ctx.beginPath();ctx.strokeStyle='#1a5c38';ctx.lineWidth=2.5;ctx.lineJoin='round';
+  d.forEach((h,i)=>i===0?ctx.moveTo(xs(i),ys(h.iqa)):ctx.lineTo(xs(i),ys(h.iqa)));
+  ctx.stroke();
+  // pontos
+  d.forEach((h,i)=>{
+    const x=xs(i),y=ys(h.iqa);
+    ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);
+    ctx.fillStyle=cor(h.iqa);ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
+    ctx.fillStyle=cor(h.iqa);ctx.font='bold 10px JetBrains Mono';ctx.textAlign='center';ctx.fillText(h.iqa.toFixed(1),x,y-9);
+    const dl=new Date(h.data).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+    ctx.fillStyle='#888';ctx.font='9px JetBrains Mono';ctx.fillText(dl,x,H-pd.b+13);
+    const lc=h.local.length>11?h.local.slice(0,11)+'…':h.local;ctx.fillText(lc,x,H-pd.b+24);
+  });
+}
+
+function exportImg(){
+  if(!last){alert('Calcule o IQA primeiro.');return;}
+  html2canvas(document.getElementById('rm'),{scale:2,backgroundColor:'#ffffff'}).then(cv=>{
+    const a=document.createElement('a');
+    a.href=cv.toDataURL('image/png');
+    a.download=`IQA-${last.iqa.toFixed(1)}-${new Date().toISOString().slice(0,10)}.png`;a.click();
+  });
+}
+
+function gerarLaudo(){
+  if(!last){alert('Calcule o IQA primeiro.');return;}
+  const now=new Date(),C=cl(last.iqa),CR=cor(last.iqa);
+  document.getElementById('ldt').textContent=now.toLocaleString('pt-BR');
+  document.getElementById('lft2').textContent=now.toLocaleString('pt-BR');
+  document.getElementById('lid').innerHTML=`
+    <div class="lf"><strong>Data/Hora</strong>${now.toLocaleString('pt-BR')}</div>
+    <div class="lf"><strong>Método</strong>IQA — Brown et al. (1970) / CETESB</div>
+    <div class="lf"><strong>Referência Legal</strong>CONAMA 357/2005</div>
+    <div class="lf"><strong>Software</strong>IQA-Fácil v2</div>`;
+  const ab=document.getElementById('liab');
+  ab.style.color=CR;ab.style.borderColor=CR;ab.style.background=CR+'10';
+  document.getElementById('liqn').textContent=last.iqa.toFixed(1);document.getElementById('liqn').style.color=CR;
+  document.getElementById('licl').textContent=C.lb;document.getElementById('licl').style.color=CR;
+  document.getElementById('lifm').textContent=`IQA = ∏ qi^wi = ${last.iqa.toFixed(4)}`;
+  const lqib=document.getElementById('lqib');lqib.innerHTML='';
+  Object.entries(PESOS).forEach(([k,m])=>{
+    const q=last.qis[k];
+    lqib.innerHTML+=`<tr><td>${m.lb}</td><td style="font-family:var(--mono)">${last.vals[k]}</td>
+      <td style="font-family:var(--mono)">${m.un}</td>
+      <td style="font-family:var(--mono);font-weight:700;color:${cor(q)}">${q.toFixed(1)}</td>
+      <td style="font-family:var(--mono)">${m.w.toFixed(2)}</td></tr>`;
+  });
+  document.getElementById('modal-laudo').classList.add('show');
+}
+function imprimirLaudo(){
+  const c=document.getElementById('lc');
+  const w=window.open('','_blank');
+  w.document.write(`<html><head><title>Laudo IQA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>body{font-family:'Space Grotesk',sans-serif;margin:28px;color:#1c1b18;font-size:12px;line-height:1.7;}
+    table{width:100%;border-collapse:collapse;margin:8px 0;font-size:11px;}
+    th{background:#1a5c38;color:#fff;padding:5px 8px;text-align:left;font-size:10px;text-transform:uppercase;}
+    td{padding:5px 8px;border-bottom:1px solid #eee;}
+    .lt{font-size:17px;font-weight:700;color:#1a5c38;}.ls{font-size:10px;color:#888;}
+    .lh{border-bottom:3px solid #1a5c38;padding-bottom:12px;margin-bottom:14px;display:flex;justify-content:space-between;}
+    .lsec{margin-bottom:14px;}.lsec h3{font-size:10px;font-weight:700;text-transform:uppercase;color:#1a5c38;border-bottom:1px solid #ddd;padding-bottom:3px;margin-bottom:7px;}
+    .lgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px;}
+    .lf strong{display:block;font-size:9px;text-transform:uppercase;color:#888;}
+    .liqab{text-align:center;padding:12px;border:2px solid;border-radius:6px;margin:10px 0;}
+    .liqan{font-size:40px;font-weight:700;font-family:'JetBrains Mono',monospace;}
+    .lft{border-top:1px solid #ddd;padding-top:8px;font-size:10px;color:#888;margin-top:14px;}
+    @media print{@page{margin:18mm;}}</style></head>
+    <body>${c.innerHTML}</body></html>`);
+  w.document.close();setTimeout(()=>w.print(),700);
+}
+function exportImgLaudo(){
+  html2canvas(document.getElementById('lc'),{scale:2,backgroundColor:'#ffffff'}).then(cv=>{
+    const a=document.createElement('a');a.href=cv.toDataURL('image/png');
+    a.download=`Laudo-IQA-${new Date().toISOString().slice(0,10)}.png`;a.click();
+  });
+}
+
+function goPage(n,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nt button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+n).classList.add('active');el.classList.add('active');
+  if(n==='historico')renderHist();
+}
+function limpar(){
+  Object.keys(PESOS).forEach(k=>{
+    const i=document.getElementById(`i-${k}`);if(i){i.value='';i.classList.remove('err');}
+    const p=document.getElementById(`p-${k}`);if(p)p.classList.remove('show');
+  });
+  document.getElementById('rph').style.display='block';
+  document.getElementById('rm').style.display='none';
+  last=null;
+  const al=document.getElementById('alert-campos');
+  al.style.background='#e8f3ed';al.style.borderLeftColor='var(--accent)';al.style.color='var(--accent)';
+  al.textContent='Preencha os 9 parâmetros e clique em Calcular IQA.';al.classList.add('show');
+}
+
+renderInputs();renderHist();
+</script>
+</body>
+</html>
