@@ -6,10 +6,8 @@
 <title>IQA-Fácil · Qualidade da Água</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-<script src="./firebase-config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./supabase-config.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
@@ -280,7 +278,7 @@ nav{background:rgba(9,72,48,.95);backdrop-filter:blur(16px);color:#fff;padding:0
 <div class="page" id="page-historico">
   <div class="stitle">Histórico de Medições</div>
   <div style="background:#fff8e1;border:1px solid #ffe082;border-left:4px solid #f9a825;border-radius:6px;padding:11px 16px;margin-bottom:16px;font-size:12px;color:#5d4037;line-height:1.6;">
-    ⚠ <strong>Atenção:</strong> O histórico é salvo apenas <strong>neste navegador e neste dispositivo</strong> (armazenamento local). Não sincroniza com outros computadores nem celulares, e pode ser perdido se o cache do navegador for limpo. <strong>Exporte o CSV regularmente</strong> para guardar seus dados com segurança. Ao entrar em uma conta com a nuvem configurada, suas medições também podem ser sincronizadas no Firestore.
+    ⚠ <strong>Atenção:</strong> O histórico é salvo apenas <strong>neste navegador e neste dispositivo</strong> (armazenamento local). Não sincroniza com outros computadores nem celulares, e pode ser perdido se o cache do navegador for limpo. <strong>Exporte o CSV regularmente</strong> para guardar seus dados com segurança. Ao entrar em uma conta com a nuvem configurada, suas medições também podem ser sincronizadas no Supabase.
   </div>
   <div class="g2">
     <div class="card">
@@ -393,11 +391,11 @@ nav{background:rgba(9,72,48,.95);backdrop-filter:blur(16px);color:#fff;padding:0
 <!-- MODAL CONTA -->
 <div class="mo" id="mauth"><div class="md">
   <h3>☁ Sua conta no IQA-Fácil</h3>
-  <p id="auth-msg">Entre para sincronizar suas medições entre dispositivos quando o Firestore estiver configurado.</p>
+  <p id="auth-msg">Entre para sincronizar suas medições entre dispositivos quando o Supabase estiver configurado.</p>
   <input type="email" id="auth-email" placeholder="seu@email.com">
   <input type="password" id="auth-pass" placeholder="senha (mín. 6 caracteres)">
   <div class="mbr"><button class="btn bprim" onclick="loginEmail()">Entrar</button><button class="btn bsec" onclick="criarConta()">Criar conta</button></div>
-  <div class="mbr"><button class="btn bsec" onclick="resetSenha()">Esqueci minha senha</button><button class="btn bsec" onclick="fecharMo('mauth')">Fechar</button></div>
+  <div class="mbr"><button class="btn bsec" onclick="resetSenha()">Esqueci minha senha</button><button class="btn bsec" onclick="sairConta()">Sair</button><button class="btn bsec" onclick="fecharMo('mauth')">Fechar</button></div>
 </div></div>
 
 <!-- MODAL IQA MANUAL -->
@@ -906,57 +904,129 @@ function compararSelecionados(){
   }).join('')+'</div>';
   document.getElementById('cmp-out').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
-function persistHist(){
+async function pushMeasurement(h){
+  if(!window.IQASupabase?.ready) return;
+  const {data:{user}}=await window.iqaSupabase.auth.getUser();
+  if(!user) return;
+  const payload={
+    user_id:user.id,
+    local:h.local||'Ponto não informado',
+    collected_at:new Date(h.data||h.ts||Date.now()).toISOString(),
+    responsible:h.resp||null,
+    notes:h.obs||null,
+    latitude:Number.isFinite(h.lat)?h.lat:null,
+    longitude:Number.isFinite(h.lng)?h.lng:null,
+    altitude_m:Number.isFinite(h.altitude)?h.altitude:null,
+    iqa:Number(h.iqa),
+    class:cl(Number(h.iqa)).lb,
+    manual:!!h.manual,
+    values:h.vals||{},
+    qis:h.qis||{}
+  };
+  const {data,error}=await window.iqaSupabase.from('iqa_measurements').insert(payload).select().single();
+  if(error) throw error;
+  h.cloudId=data.id;
   localStorage.setItem('iqaf-h',JSON.stringify(hist));
-  if(window.IQAFirebase && window.IQAFirebase.ready && firebase.auth().currentUser){
-    const u=firebase.auth().currentUser;
-    firebase.firestore().collection('iqaFacilUsers').doc(u.uid).set({updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
-    firebase.firestore().collection('iqaFacilUsers').doc(u.uid).collection('measurements').doc('history').set({items:hist,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+}
+async function pullMeasurements(){
+  if(!window.IQASupabase?.ready) return;
+  const {data:{user}}=await window.iqaSupabase.auth.getUser();
+  if(!user) return;
+  const {data,error}=await window.iqaSupabase
+    .from('iqa_measurements')
+    .select('*')
+    .order('collected_at',{ascending:false});
+  if(error) throw error;
+  const cloud=(data||[]).map(r=>({
+    id:Number(r.id),
+    cloudId:Number(r.id),
+    iqa:Number(r.iqa),
+    local:r.local,
+    data:r.collected_at,
+    resp:r.responsible||'',
+    obs:r.notes||'',
+    lat:r.latitude,
+    lng:r.longitude,
+    altitude:r.altitude_m,
+    manual:!!r.manual,
+    vals:r.values||{},
+    qis:r.qis||{},
+    ts:r.created_at
+  }));
+  const locals=hist.filter(h=>!h.cloudId);
+  hist=[...cloud,...locals];
+  localStorage.setItem('iqaf-h',JSON.stringify(hist));
+  renderHist();
+}
+async function syncLocalToCloud(){
+  if(!window.IQASupabase?.ready) return;
+  const {data:{user}}=await window.iqaSupabase.auth.getUser();
+  if(!user) return;
+  const pending=hist.filter(h=>!h.cloudId);
+  for(const h of pending){
+    try{await pushMeasurement(h);}catch(e){console.warn('Sync IQA-Fácil:',e.message)}
   }
 }
 async function initCloud(){
   try{
-    const cfg=window.IQA_FIREBASE_CONFIG;
-    if(!cfg||!cfg.apiKey||String(cfg.apiKey).includes('COLE_AQUI')){window.IQAFirebase={ready:false};return;}
-    if(!firebase.apps.length) firebase.initializeApp(cfg);
-    window.IQAFirebase={ready:true};
-    firebase.auth().onAuthStateChanged(async u=>{
+    const cfg=window.IQA_SUPABASE_CONFIG;
+    if(!cfg||!cfg.url||!cfg.publishableKey){window.IQASupabase={ready:false};return;}
+    window.iqaSupabase=window.supabase.createClient(cfg.url,cfg.publishableKey);
+    window.IQASupabase={ready:true};
+    window.iqaSupabase.auth.onAuthStateChange(async (_event,session)=>{
       const b=document.getElementById('auth-btn');
-      if(u){
+      if(session?.user){
         b.textContent='Minha conta';
-        try{
-          const d=await firebase.firestore().collection('iqaFacilUsers').doc(u.uid).collection('measurements').doc('history').get();
-          if(d.exists&&Array.isArray(d.data().items)&&d.data().items.length){hist=d.data().items;localStorage.setItem('iqaf-h',JSON.stringify(hist));renderHist();}
-        }catch(e){console.warn('Sync IQA-Fácil:',e.message)}
+        await syncLocalToCloud();
+        await pullMeasurements();
       }else b.textContent='Entrar';
     });
-  }catch(e){window.IQAFirebase={ready:false};console.warn(e)}
+    const {data:{session}}=await window.iqaSupabase.auth.getSession();
+    if(session?.user){document.getElementById('auth-btn').textContent='Minha conta';await syncLocalToCloud();await pullMeasurements();}
+  }catch(e){window.IQASupabase={ready:false};console.warn(e)}
 }
 function abrirAuth(){
   const m=document.getElementById('auth-msg');
-  if(!window.IQAFirebase?.ready) m.innerHTML='A interface de conta está pronta, mas este repositório ainda precisa receber a configuração do projeto Firebase em <code>firebase-config.js</code>. Enquanto isso, seus dados continuam seguros neste navegador.';
-  else if(firebase.auth().currentUser) m.innerHTML='Conectado como <strong>'+firebase.auth().currentUser.email+'</strong>. Suas medições podem ser sincronizadas com o Firestore.';
+  if(!window.IQASupabase?.ready) m.innerHTML='A configuração do Supabase não foi carregada.';
   else m.textContent='Entre ou crie uma conta para sincronizar suas medições entre dispositivos.';
   document.getElementById('mauth').classList.add('show');
 }
 async function loginEmail(){
-  if(!window.IQAFirebase?.ready){abrirAuth();return;}
-  try{await firebase.auth().signInWithEmailAndPassword(document.getElementById('auth-email').value,document.getElementById('auth-pass').value);fecharMo('mauth');persistHist();}
-  catch(e){alert('Não foi possível entrar: '+e.message)}
+  if(!window.IQASupabase?.ready){abrirAuth();return;}
+  try{
+    const {error}=await window.iqaSupabase.auth.signInWithPassword({
+      email:document.getElementById('auth-email').value,
+      password:document.getElementById('auth-pass').value
+    });
+    if(error) throw error;
+    fecharMo('mauth');
+  }catch(e){alert('Não foi possível entrar: '+e.message)}
 }
 async function criarConta(){
-  if(!window.IQAFirebase?.ready){abrirAuth();return;}
-  try{await firebase.auth().createUserWithEmailAndPassword(document.getElementById('auth-email').value,document.getElementById('auth-pass').value);fecharMo('mauth');persistHist();}
-  catch(e){alert('Não foi possível criar a conta: '+e.message)}
+  if(!window.IQASupabase?.ready){abrirAuth();return;}
+  try{
+    const {error}=await window.iqaSupabase.auth.signUp({
+      email:document.getElementById('auth-email').value,
+      password:document.getElementById('auth-pass').value,
+      options:{emailRedirectTo:location.origin+location.pathname}
+    });
+    if(error) throw error;
+    alert('Conta criada. Se a confirmação por e-mail estiver ativa, confirme o endereço antes de entrar.');
+  }catch(e){alert('Não foi possível criar a conta: '+e.message)}
 }
 async function resetSenha(){
-  if(!window.IQAFirebase?.ready){abrirAuth();return;}
+  if(!window.IQASupabase?.ready){abrirAuth();return;}
   const email=document.getElementById('auth-email').value;
   if(!email){alert('Digite seu e-mail primeiro.');return;}
-  try{await firebase.auth().sendPasswordResetEmail(email);alert('E-mail de recuperação enviado.');}
-  catch(e){alert('Não foi possível enviar: '+e.message)}
+  try{
+    const {error}=await window.iqaSupabase.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});
+    if(error) throw error;
+    alert('E-mail de recuperação enviado.');
+  }catch(e){alert('Não foi possível enviar: '+e.message)}
 }
-
+async function sairConta(){
+  if(window.IQASupabase?.ready) await window.iqaSupabase.auth.signOut();
+}
 function painelFiltrado(){
   let arr=[...hist];
   const loc=document.getElementById('painel-local')?.value||'';
@@ -1058,9 +1128,31 @@ function compararAntesDepois(){
 
 // Mantém compatibilidade: qualquer salvamento passa também pela camada de sincronização.
 const _confirmarSalvar=confirmarSalvar;
-confirmarSalvar=function(){_confirmarSalvar();persistHist();}
+confirmarSalvar=async function(){
+  const before=hist[0]?.id;
+  _confirmarSalvar();
+  const h=hist[0];
+  if(h&&h.id!==before&&window.IQASupabase?.ready){
+    try{await pushMeasurement(h);}catch(e){console.warn(e.message)}
+  }
+}
+const _salvarManual=salvarManual;
+salvarManual=async function(){
+  const before=hist[0]?.id;
+  _salvarManual();
+  const h=hist[0];
+  if(h&&h.id!==before&&window.IQASupabase?.ready){
+    try{await pushMeasurement(h);}catch(e){console.warn(e.message)}
+  }
+}
 const _delHist=delHist;
-delHist=function(id){_delHist(id);persistHist();}
+delHist=async function(id){
+  const h=hist.find(x=>x.id===id);
+  _delHist(id);
+  if(h?.cloudId&&window.IQASupabase?.ready){
+    try{await window.iqaSupabase.from('iqa_measurements').delete().eq('id',h.cloudId);}catch(e){console.warn(e.message)}
+  }
+}
 
 renderInputs();renderHist();initCloud();
 </script>
