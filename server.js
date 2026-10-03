@@ -28,7 +28,9 @@ app.post('/auth/signup',async(req,res)=>{
   if(!email) return res.status(400).json({error:'Digite seu e-mail.'});
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({error:'Digite um e-mail válido.'});
   if(password.length<6) return res.status(400).json({error:'A senha precisa ter pelo menos 6 caracteres.'});
-  const {data,error}=await anon().auth.signUp({email,password});
+  const redirectTo=String(req.body?.redirectTo||'').trim();
+  const options=redirectTo?{emailRedirectTo:redirectTo}:undefined;
+  const {data,error}=await anon().auth.signUp({email,password,options});
   if(error){
     const msg=error.message==='Anonymous sign-ins are disabled'?'Digite um e-mail válido para criar sua conta.':error.message;
     return res.status(400).json({error:msg});
