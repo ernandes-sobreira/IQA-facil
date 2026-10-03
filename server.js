@@ -23,21 +23,33 @@ const tokenOf=req=>{
 app.get('/health',(_req,res)=>res.json({ok:true,service:'iqa-facil-api'}));
 
 app.post('/auth/signup',async(req,res)=>{
-  const {email,password}=req.body||{};
+  const email=String(req.body?.email||'').trim().toLowerCase();
+  const password=String(req.body?.password||'');
+  if(!email) return res.status(400).json({error:'Digite seu e-mail.'});
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({error:'Digite um e-mail válido.'});
+  if(password.length<6) return res.status(400).json({error:'A senha precisa ter pelo menos 6 caracteres.'});
   const {data,error}=await anon().auth.signUp({email,password});
-  if(error) return res.status(400).json({error:error.message});
+  if(error){
+    const msg=error.message==='Anonymous sign-ins are disabled'?'Digite um e-mail válido para criar sua conta.':error.message;
+    return res.status(400).json({error:msg});
+  }
   res.json({user:data.user,session:data.session});
 });
 
 app.post('/auth/login',async(req,res)=>{
-  const {email,password}=req.body||{};
+  const email=String(req.body?.email||'').trim().toLowerCase();
+  const password=String(req.body?.password||'');
+  if(!email) return res.status(400).json({error:'Digite seu e-mail.'});
+  if(!password) return res.status(400).json({error:'Digite sua senha.'});
   const {data,error}=await anon().auth.signInWithPassword({email,password});
-  if(error) return res.status(400).json({error:error.message});
+  if(error) return res.status(400).json({error:'E-mail ou senha incorretos.'});
   res.json({user:data.user,session:data.session});
 });
 
 app.post('/auth/reset',async(req,res)=>{
-  const {email,redirectTo}=req.body||{};
+  const email=String(req.body?.email||'').trim().toLowerCase();
+  const {redirectTo}=req.body||{};
+  if(!email) return res.status(400).json({error:'Digite seu e-mail.'});
   const {error}=await anon().auth.resetPasswordForEmail(email,redirectTo?{redirectTo}:undefined);
   if(error) return res.status(400).json({error:error.message});
   res.json({ok:true});
