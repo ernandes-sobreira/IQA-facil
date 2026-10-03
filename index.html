@@ -1037,7 +1037,7 @@ function authFields(requirePassword=true){
   const email=document.getElementById('auth-email').value.trim().toLowerCase();
   const password=document.getElementById('auth-pass').value;
   if(!email){authMessage('error','Digite seu e-mail.');document.getElementById('auth-email').focus();return null;}
-  if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)){authMessage('error','Digite um e-mail válido.');document.getElementById('auth-email').focus();return null;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){authMessage('error','Digite um e-mail válido.');document.getElementById('auth-email').focus();return null;}
   if(requirePassword&&!password){authMessage('error','Digite sua senha.');document.getElementById('auth-pass').focus();return null;}
   return {email,password};
 }
