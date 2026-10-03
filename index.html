@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="referrer" content="no-referrer">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <title>IQA-Fácil · Qualidade da Água</title>
 <meta name="description" content="Calcule, interprete e acompanhe o Índice de Qualidade das Águas (IQA) com planilha, histórico, mapa e laudo.">
 <meta name="theme-color" content="#1f8a5b">
@@ -1772,7 +1772,7 @@ function renderMapa(arr){
   }
   wrap.innerHTML='<div id="painel-map"></div>';
   _iqaMap=L.map('painel-map',{scrollWheelZoom:false});
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(_iqaMap);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,referrerPolicy:'strict-origin-when-cross-origin',attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'}).addTo(_iqaMap);
   const bounds=[];
   pts.forEach(h=>{
     const c=cor(h.iqa);
