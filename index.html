@@ -6,16 +6,20 @@
 <title>IQA-Fácil · Qualidade da Água</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script src="./firebase-config.js"></script>
 <style>
 :root {
-  --bg:#f0ede8;--surface:#fff;--surface2:#f7f5f2;--border:#ddd9d0;
-  --text:#1c1b18;--muted:#7a7670;--accent:#1a5c38;--accent2:#e8f3ed;
-  --blue:#0d4275;--sans:'Space Grotesk',sans-serif;--mono:'JetBrains Mono',monospace;
-  --ot:#1b6e2e;--bo:#0d4275;--ra:#b07d00;--ru:#c04a00;--mr:#a01515;--r:8px;
+  --bg:#f4f8f5;--surface:#fff;--surface2:#f6faf7;--border:#dce8df;
+  --text:#102018;--muted:#647269;--accent:#0c6b46;--accent2:#e7f5ed;
+  --blue:#125f92;--cyan:#0f8f88;--ink:#0b2419;--sans:'Space Grotesk',sans-serif;--mono:'JetBrains Mono',monospace;
+  --ot:#168447;--bo:#176b9c;--ra:#c68b16;--ru:#d15d28;--mr:#b72932;--r:16px;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;}
-nav{background:var(--accent);color:#fff;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:54px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.2);}
+body{font-family:var(--sans);background:radial-gradient(circle at 8% -10%,#dff5e9 0,transparent 28%),linear-gradient(180deg,#f8fbf9 0,#eef5f1 100%);color:var(--text);min-height:100vh;}
+nav{background:rgba(9,72,48,.95);backdrop-filter:blur(16px);color:#fff;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:100;box-shadow:0 10px 30px rgba(5,50,33,.14);}
 .nb{display:flex;align-items:center;gap:10px;}
 .nb .dot{width:10px;height:10px;background:#6ed89a;border-radius:50%;}
 .nb h1{font-size:16px;font-weight:700;}
@@ -28,7 +32,7 @@ nav{background:var(--accent);color:#fff;padding:0 24px;display:flex;align-items:
 .page.active{display:block;}
 .stitle{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
 .stitle::after{content:'';flex:1;height:1px;background:var(--border);}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.card{background:rgba(255,255,255,.94);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:0 10px 28px rgba(31,72,49,.06);}
 .ch{background:var(--surface2);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:9px;}
 .ch .ico{width:28px;height:28px;background:var(--accent);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
 .ch h2{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--accent);}
@@ -85,7 +89,7 @@ nav{background:var(--accent);color:#fff;padding:0 24px;display:flex;align-items:
 .cbadge{display:inline-block;padding:2px 8px;border-radius:10px;font-family:var(--mono);font-size:10px;font-weight:600;color:#fff;}
 .sok{background:#1b6e2e;}.sal{background:#b07d00;}.svi{background:#a01515;}.sna{background:#999;}
 /* HIST */
-.hi{display:grid;grid-template-columns:14px 1fr auto auto;align-items:center;gap:11px;padding:9px 12px;border:1px solid var(--border);border-radius:6px;margin-bottom:7px;background:#fff;transition:.15s;cursor:pointer;}
+.hi{display:grid;grid-template-columns:18px 14px 1fr auto auto;align-items:center;gap:11px;padding:9px 12px;border:1px solid var(--border);border-radius:6px;margin-bottom:7px;background:#fff;transition:.15s;cursor:pointer;}
 .hi:hover{border-color:var(--accent);background:var(--accent2);}
 .hdot{width:14px;height:14px;border-radius:50%;}
 .hn .nm{font-size:13px;font-weight:600;}
@@ -122,6 +126,33 @@ nav{background:var(--accent);color:#fff;padding:0 24px;display:flex;align-items:
 .lft{border-top:1px solid var(--border);padding-top:10px;font-size:10px;color:var(--muted);margin-top:16px;}
 /* LAUDO modal oversize */
 #modal-laudo .md{max-width:740px;max-height:90vh;overflow-y:auto;}
+
+.hero-intro{display:grid;grid-template-columns:1.25fr .75fr;gap:18px;margin-bottom:22px}
+.hero-copy{background:linear-gradient(135deg,#083c29,#0b6f4a 58%,#12847a);color:#fff;border-radius:24px;padding:34px;min-height:280px;position:relative;overflow:hidden}
+.hero-copy:after{content:'';position:absolute;width:260px;height:260px;border-radius:50%;right:-80px;top:-70px;background:rgba(255,255,255,.08)}
+.kicker{font-size:11px;text-transform:uppercase;letter-spacing:1.8px;font-weight:700;opacity:.75}
+.hero-copy h2{font-size:44px;line-height:1.02;letter-spacing:-1.8px;max-width:650px;margin:14px 0 12px}
+.hero-copy p{font-size:15px;line-height:1.6;max-width:650px;color:rgba(255,255,255,.82)}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.hero-actions .btn{border-radius:999px}
+.hero-guide{display:grid;gap:12px}
+.guide-card{background:#fff;border:1px solid var(--border);border-radius:18px;padding:18px;display:flex;gap:14px;align-items:flex-start}
+.guide-n{width:32px;height:32px;border-radius:10px;background:var(--accent2);color:var(--accent);display:grid;place-items:center;font-weight:800;flex:0 0 auto}
+.guide-card strong{display:block;font-size:13px;margin-bottom:3px}.guide-card span{font-size:11px;color:var(--muted);line-height:1.45}
+.audience{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0 24px}
+.aud{padding:15px;border:1px solid var(--border);border-radius:14px;background:#fff}.aud b{font-size:12px}.aud div{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.45}
+.helpdot{width:20px;height:20px;border-radius:50%;display:inline-grid;place-items:center;background:var(--accent2);color:var(--accent);font-size:11px;cursor:help;margin-left:5px}
+.loginbtn{border:1px solid rgba(255,255,255,.25)!important;background:rgba(255,255,255,.1)!important}
+.cloudstate{font-size:10px;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.12);color:#d9f6e7}
+.compare-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 12px}
+.hi.sel{outline:2px solid var(--accent);background:var(--accent2)}
+.cmpbox{width:18px;height:18px;accent-color:var(--accent)}
+.cmp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:14px}
+.cmp-card{border:1px solid var(--border);border-radius:14px;padding:14px;background:#fff}
+.cmp-score{font:700 30px var(--mono);margin:6px 0}
+.tip{font-size:11px;line-height:1.5;color:var(--muted);background:var(--surface2);border-radius:10px;padding:10px 12px;margin-top:8px}
+@media(max-width:850px){.hero-intro{grid-template-columns:1fr}.audience{grid-template-columns:1fr 1fr}.hero-copy h2{font-size:34px}}
+@media(max-width:580px){nav{padding:0 10px}.nt button{padding:6px 8px;font-size:11px}.nb span{display:none}.audience{grid-template-columns:1fr}.hero-copy{padding:24px}.hero-copy h2{font-size:30px}}
 </style>
 </head>
 <body>
@@ -131,14 +162,37 @@ nav{background:var(--accent);color:#fff;padding:0 24px;display:flex;align-items:
     <button class="active" onclick="goPage('calcular',this)">Calcular</button>
     <button onclick="goPage('historico',this)">Histórico</button>
     <button onclick="goPage('sobre',this)">Sobre</button>
+    <button class="loginbtn" id="auth-btn" onclick="abrirAuth()">Entrar</button>
   </div>
 </nav>
 
 <!-- CALCULAR -->
 <div class="page active" id="page-calcular">
+  <div class="hero-intro">
+    <section class="hero-copy">
+      <div class="kicker">Qualidade da água, sem complicação</div>
+      <h2>Dos dados de laboratório a uma leitura que qualquer pessoa entende.</h2>
+      <p>O IQA reúne nove características da água em um único índice. Você informa os resultados da análise; o IQA-Fácil calcula, explica, salva e permite comparar diferentes pontos ou datas.</p>
+      <div class="hero-actions">
+        <button class="btn" style="background:#fff;color:#0b5a3d" onclick="document.getElementById('pc').scrollIntoView({behavior:'smooth'})">Calcular meu IQA</button>
+        <button class="btn" style="background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.25)" onclick="abrirManual()">Já tenho um IQA pronto</button>
+      </div>
+    </section>
+    <aside class="hero-guide">
+      <div class="guide-card"><div class="guide-n">1</div><div><strong>Tenha a análise da água</strong><span>Use os valores de OD, coliformes, pH, DBO, temperatura, N, P, turbidez e sólidos.</span></div></div>
+      <div class="guide-card"><div class="guide-n">2</div><div><strong>Preencha os campos</strong><span>Não precisa conhecer a fórmula. O sistema mostra o qi de cada parâmetro enquanto você digita.</span></div></div>
+      <div class="guide-card"><div class="guide-n">3</div><div><strong>Entenda e acompanhe</strong><span>Veja a classe, salve a medição, compare datas e exporte laudo ou CSV.</span></div></div>
+    </aside>
+  </div>
+  <div class="audience">
+    <div class="aud"><b>🎓 Estudantes e professores</b><div>Ensino de limnologia, gestão hídrica e interpretação de dados ambientais.</div></div>
+    <div class="aud"><b>🔬 Laboratórios e pesquisadores</b><div>Triagem rápida, organização de séries e comparação entre campanhas.</div></div>
+    <div class="aud"><b>🏛 Gestão pública e comitês</b><div>Acompanhamento de rios, córregos e pontos de monitoramento.</div></div>
+    <div class="aud"><b>🌱 Comunidades e projetos</b><div>Uma leitura simples para comunicar o que os dados de qualidade da água mostram.</div></div>
+  </div>
   <div class="g2">
     <div class="card">
-      <div class="ch"><div class="ico">⬡</div><h2>Parâmetros de Entrada</h2></div>
+      <div class="ch"><div class="ico">⬡</div><h2>Parâmetros de Entrada <span class="helpdot" title="Passe o mouse nos nomes dos parâmetros. O qi é a nota de qualidade de cada parâmetro, de 0 a 100.">?</span></h2></div>
       <div class="cb">
         <div id="pc"></div>
         <div style="margin:2px 0 12px;padding:10px 11px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;">
@@ -204,14 +258,20 @@ nav{background:var(--accent);color:#fff;padding:0 24px;display:flex;align-items:
 <div class="page" id="page-historico">
   <div class="stitle">Histórico de Medições</div>
   <div style="background:#fff8e1;border:1px solid #ffe082;border-left:4px solid #f9a825;border-radius:6px;padding:11px 16px;margin-bottom:16px;font-size:12px;color:#5d4037;line-height:1.6;">
-    ⚠ <strong>Atenção:</strong> O histórico é salvo apenas <strong>neste navegador e neste dispositivo</strong> (armazenamento local). Não sincroniza com outros computadores nem celulares, e pode ser perdido se o cache do navegador for limpo. <strong>Exporte o CSV regularmente</strong> para guardar seus dados com segurança.
+    ⚠ <strong>Atenção:</strong> O histórico é salvo apenas <strong>neste navegador e neste dispositivo</strong> (armazenamento local). Não sincroniza com outros computadores nem celulares, e pode ser perdido se o cache do navegador for limpo. <strong>Exporte o CSV regularmente</strong> para guardar seus dados com segurança. Ao entrar em uma conta com a nuvem configurada, suas medições também podem ser sincronizadas no Firestore.
   </div>
   <div class="g2">
     <div class="card">
       <div class="ch"><div class="ico">📋</div><h2>Medições Salvas</h2></div>
       <div class="cb">
-        <div id="hl"></div>
-        <button class="btn bsec bsm" onclick="exportCSV()" style="margin-top:10px;">⬇ Exportar CSV</button>
+        <div class="compare-toolbar">
+          <button class="btn bprim bsm" onclick="compararSelecionados()">Comparar selecionados</button>
+          <button class="btn bsec bsm" onclick="abrirManual()">+ Adicionar IQA antigo</button>
+          <button class="btn bsec bsm" onclick="exportCSV()">⬇ CSV</button>
+        </div>
+        <div class="tip">Marque dois ou mais registros para comparar. Você também pode incluir um IQA calculado anteriormente, mesmo que tenha sido feito fora desta plataforma.</div>
+        <div id="hl" style="margin-top:12px;"></div>
+        <div id="cmp-out"></div>
       </div>
     </div>
     <div class="card" style="padding:16px;">
@@ -228,6 +288,7 @@ nav{background:var(--accent);color:#fff;padding:0 24px;display:flex;align-items:
     <div class="card">
       <div class="ch"><div class="ico">📐</div><h2>Base Científica</h2></div>
       <div class="cb" style="font-size:13px;line-height:1.8;color:var(--muted);">
+        <div style="padding:14px;background:var(--accent2);border-radius:12px;color:var(--accent);margin-bottom:16px"><strong>O IQA em uma frase:</strong> é uma forma de resumir vários resultados de qualidade da água em um número fácil de acompanhar e comparar. Ele não substitui a interpretação completa de cada parâmetro nem define sozinho se a água é potável.</div>
         <p><strong style="color:var(--text)">Fórmula</strong><br>IQA = ∏ qi<sup>wi</sup> — média geométrica ponderada. ∑wi = 1,00.</p><br>
         <p><strong style="color:var(--text)">Curvas qi</strong><br>Subíndice qi (0–100) calculado pelas equações analíticas das curvas do IQA adotadas na metodologia CETESB.</p><br>
         <p><strong style="color:var(--text)">OD — saturação</strong><br>OD convertido para % de saturação a partir da concentração de saturação corrigida pela temperatura da água e altitude do ponto.</p><br>
@@ -246,7 +307,7 @@ nav{background:var(--accent);color:#fff;padding:0 24px;display:flex;align-items:
         <br>
         <div style="background:#f7f5f2;border:1px solid var(--border);border-radius:6px;padding:14px;font-size:12px;line-height:1.8;color:var(--text);">
           <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:8px;">Autoria</div>
-          Desenvolvido por <strong>Ernandes Sobreira Oliveira Junior</strong> e <strong>Wilkinson Lopes Lazaro</strong><br>
+          Desenvolvido por <strong>Ernandes Sobreira Oliveira Junior</strong>, <strong>Wilkinson Lopes Lazaro</strong> e <strong>Tadeu Queiroz de Miranda</strong><br>
           <span style="color:var(--muted);">Universidade do Estado de Mato Grosso — UNEMAT</span><br>
           <span style="font-family:var(--mono);font-size:11px;color:var(--accent);">PPGCA · PROFÁGUA</span><br><br>
           <span style="font-size:11px;color:var(--muted);">Finalidade: educacional e de gestão dos recursos hídricos.</span>
@@ -255,6 +316,27 @@ nav{background:var(--accent);color:#fff;padding:0 24px;display:flex;align-items:
     </div>
   </div>
 </div>
+
+<!-- MODAL CONTA -->
+<div class="mo" id="mauth"><div class="md">
+  <h3>☁ Sua conta no IQA-Fácil</h3>
+  <p id="auth-msg">Entre para sincronizar suas medições entre dispositivos quando o Firestore estiver configurado.</p>
+  <input type="email" id="auth-email" placeholder="seu@email.com">
+  <input type="password" id="auth-pass" placeholder="senha (mín. 6 caracteres)">
+  <div class="mbr"><button class="btn bprim" onclick="loginEmail()">Entrar</button><button class="btn bsec" onclick="criarConta()">Criar conta</button></div>
+  <div class="mbr"><button class="btn bsec" onclick="resetSenha()">Esqueci minha senha</button><button class="btn bsec" onclick="fecharMo('mauth')">Fechar</button></div>
+</div></div>
+
+<!-- MODAL IQA MANUAL -->
+<div class="mo" id="mmanual"><div class="md">
+  <h3>＋ Adicionar IQA já calculado</h3>
+  <p>Use para trazer resultados antigos ou feitos em outro sistema. Esse registro entra no histórico e pode ser comparado, mas não terá os nove subíndices se você informar apenas o IQA final.</p>
+  <input id="man-local" placeholder="Local / ponto de coleta">
+  <input type="date" id="man-data">
+  <input type="number" id="man-iqa" min="0" max="100" step="0.1" placeholder="IQA (0 a 100)">
+  <input id="man-obs" placeholder="Observação / fonte do resultado">
+  <div class="mbr"><button class="btn bprim" onclick="salvarManual()">Salvar no histórico</button><button class="btn bsec" onclick="fecharMo('mmanual')">Cancelar</button></div>
+</div></div>
 
 <!-- MODAL SALVAR -->
 <div class="mo" id="ms">
@@ -578,7 +660,8 @@ function renderHist(){
   hist.forEach(h=>{
     const C=cl(h.iqa),CR=cor(h.iqa);
     const df=new Date(h.data).toLocaleString('pt-BR');
-    hl.innerHTML+=`<div class="hi">
+    hl.innerHTML+=`<div class="hi" id="hist-${h.id}">
+      <input class="cmpbox" type="checkbox" value="${h.id}" onchange="document.getElementById('hist-${h.id}').classList.toggle('sel',this.checked)">
       <div class="hdot" style="background:${CR}"></div>
       <div class="hn"><div class="nm">${h.local}</div><div class="dt">${df}${h.resp?' · '+h.resp:''}</div></div>
       <div><div class="hiqa" style="color:${CR}">${h.iqa.toFixed(1)}</div><div class="hcl" style="color:${CR}">${C.lb}</div></div>
@@ -594,8 +677,8 @@ function exportCSV(){
   if(hist.length===0){alert('Nenhuma medição salva.');return;}
   let csv='Local,Data,Responsavel,IQA,Classe,Altitude_m,OD,Coliformes,pH,DBO,Temperatura_Agua,Nitrogenio,Fosforo,Turbidez,Solidos\n';
   hist.forEach(h=>{
-    const C=cl(h.iqa).lb,v=h.vals;
-    csv+=`"${h.local}","${h.data}","${h.resp||''}",${h.iqa.toFixed(2)},${C},${h.altitude??''},${v.oxigenio},${v.coliformes},${v.ph},${v.dbo},${v.temperatura},${v.nitrogenio},${v.fosforo},${v.turbidez},${v.solidos}\n`;
+    const C=cl(h.iqa).lb,v=h.vals||{};
+    csv+=`"${h.local}","${h.data}","${h.resp||''}",${h.iqa.toFixed(2)},${C},${h.altitude??''},${v.oxigenio??''},${v.coliformes??''},${v.ph??''},${v.dbo??''},${v.temperatura??''},${v.nitrogenio??''},${v.fosforo??''},${v.turbidez??''},${v.solidos??''}\n`;
   });
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
   a.download='iqa-historico.csv';a.click();
@@ -722,7 +805,87 @@ function limpar(){
   al.textContent='Preencha os 9 parâmetros, informe a altitude e clique em Calcular IQA.';al.classList.add('show');
 }
 
-renderInputs();renderHist();
+function abrirManual(){
+  document.getElementById('man-data').value=new Date().toISOString().slice(0,10);
+  document.getElementById('mmanual').classList.add('show');
+}
+function salvarManual(){
+  const local=document.getElementById('man-local').value.trim()||'Ponto não informado';
+  const data=document.getElementById('man-data').value||new Date().toISOString().slice(0,10);
+  const iqa=parseFloat(document.getElementById('man-iqa').value);
+  const obs=document.getElementById('man-obs').value.trim();
+  if(!Number.isFinite(iqa)||iqa<0||iqa>100){alert('Informe um IQA entre 0 e 100.');return;}
+  hist.unshift({id:Date.now(),iqa,local,data,obs,resp:'',manual:true,vals:{},qis:{},ts:new Date().toISOString()});
+  persistHist();fecharMo('mmanual');renderHist();
+}
+function compararSelecionados(){
+  const ids=[...document.querySelectorAll('.cmpbox:checked')].map(x=>Number(x.value));
+  if(ids.length<2){alert('Selecione pelo menos 2 medições.');return;}
+  const items=ids.map(id=>hist.find(h=>h.id===id)).filter(Boolean);
+  document.getElementById('cmp-out').innerHTML='<div class="cmp-grid">'+items.map(h=>{
+    const C=cl(h.iqa),CR=cor(h.iqa);
+    return `<div class="cmp-card"><div style="font-size:11px;color:var(--muted)">${new Date(h.data).toLocaleDateString('pt-BR')}</div><strong>${h.local}</strong><div class="cmp-score" style="color:${CR}">${h.iqa.toFixed(1)}</div><div style="font-size:11px;font-weight:700;color:${CR}">${C.lb}</div></div>`;
+  }).join('')+'</div>';
+  document.getElementById('cmp-out').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function persistHist(){
+  localStorage.setItem('iqaf-h',JSON.stringify(hist));
+  if(window.IQAFirebase && window.IQAFirebase.ready && firebase.auth().currentUser){
+    const u=firebase.auth().currentUser;
+    firebase.firestore().collection('iqaFacilUsers').doc(u.uid).set({updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+    firebase.firestore().collection('iqaFacilUsers').doc(u.uid).collection('measurements').doc('history').set({items:hist,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+  }
+}
+async function initCloud(){
+  try{
+    const cfg=window.IQA_FIREBASE_CONFIG;
+    if(!cfg||!cfg.apiKey||String(cfg.apiKey).includes('COLE_AQUI')){window.IQAFirebase={ready:false};return;}
+    if(!firebase.apps.length) firebase.initializeApp(cfg);
+    window.IQAFirebase={ready:true};
+    firebase.auth().onAuthStateChanged(async u=>{
+      const b=document.getElementById('auth-btn');
+      if(u){
+        b.textContent='Minha conta';
+        try{
+          const d=await firebase.firestore().collection('iqaFacilUsers').doc(u.uid).collection('measurements').doc('history').get();
+          if(d.exists&&Array.isArray(d.data().items)&&d.data().items.length){hist=d.data().items;localStorage.setItem('iqaf-h',JSON.stringify(hist));renderHist();}
+        }catch(e){console.warn('Sync IQA-Fácil:',e.message)}
+      }else b.textContent='Entrar';
+    });
+  }catch(e){window.IQAFirebase={ready:false};console.warn(e)}
+}
+function abrirAuth(){
+  const m=document.getElementById('auth-msg');
+  if(!window.IQAFirebase?.ready) m.innerHTML='A interface de conta está pronta, mas este repositório ainda precisa receber a configuração do projeto Firebase em <code>firebase-config.js</code>. Enquanto isso, seus dados continuam seguros neste navegador.';
+  else if(firebase.auth().currentUser) m.innerHTML='Conectado como <strong>'+firebase.auth().currentUser.email+'</strong>. Suas medições podem ser sincronizadas com o Firestore.';
+  else m.textContent='Entre ou crie uma conta para sincronizar suas medições entre dispositivos.';
+  document.getElementById('mauth').classList.add('show');
+}
+async function loginEmail(){
+  if(!window.IQAFirebase?.ready){abrirAuth();return;}
+  try{await firebase.auth().signInWithEmailAndPassword(document.getElementById('auth-email').value,document.getElementById('auth-pass').value);fecharMo('mauth');persistHist();}
+  catch(e){alert('Não foi possível entrar: '+e.message)}
+}
+async function criarConta(){
+  if(!window.IQAFirebase?.ready){abrirAuth();return;}
+  try{await firebase.auth().createUserWithEmailAndPassword(document.getElementById('auth-email').value,document.getElementById('auth-pass').value);fecharMo('mauth');persistHist();}
+  catch(e){alert('Não foi possível criar a conta: '+e.message)}
+}
+async function resetSenha(){
+  if(!window.IQAFirebase?.ready){abrirAuth();return;}
+  const email=document.getElementById('auth-email').value;
+  if(!email){alert('Digite seu e-mail primeiro.');return;}
+  try{await firebase.auth().sendPasswordResetEmail(email);alert('E-mail de recuperação enviado.');}
+  catch(e){alert('Não foi possível enviar: '+e.message)}
+}
+
+// Mantém compatibilidade: qualquer salvamento passa também pela camada de sincronização.
+const _confirmarSalvar=confirmarSalvar;
+confirmarSalvar=function(){_confirmarSalvar();persistHist();}
+const _delHist=delHist;
+delHist=function(id){_delHist(id);persistHist();}
+
+renderInputs();renderHist();initCloud();
 </script>
 </body>
 </html>
