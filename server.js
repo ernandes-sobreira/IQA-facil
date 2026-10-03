@@ -185,7 +185,7 @@ const cleanNums=o=>{
   return out;
 };
 
-app.post('/measurements',limit(600,15*60*1000),async(req,res)=>{
+app.post('/measurements',limit(3000,15*60*1000),async(req,res)=>{
   const ctx=await userOf(req,res); if(!ctx) return;
   const h=req.body||{};
   const iqa=numIn(h.iqa,0,100);
