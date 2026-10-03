@@ -32,7 +32,10 @@ app.post('/auth/signup',async(req,res)=>{
   const options=redirectTo?{emailRedirectTo:redirectTo}:undefined;
   const {data,error}=await anon().auth.signUp({email,password,options});
   if(error){
-    const msg=error.message==='Anonymous sign-ins are disabled'?'Digite um e-mail válido para criar sua conta.':error.message;
+    let msg=error.message;
+    if(msg==='Anonymous sign-ins are disabled') msg='Digite um e-mail válido para criar sua conta.';
+    if(/rate limit/i.test(msg)) msg='Muitas tentativas de envio em pouco tempo. Aguarde alguns minutos e tente novamente. Se a conta já foi criada, use Entrar.';
+    if(/already registered|already exists/i.test(msg)) msg='Este e-mail já possui uma conta. Use Entrar ou Esqueci minha senha.';
     return res.status(400).json({error:msg});
   }
   res.json({user:data.user,session:data.session});
