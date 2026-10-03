@@ -153,6 +153,22 @@ nav{background:rgba(9,72,48,.95);backdrop-filter:blur(16px);color:#fff;padding:0
 .tip{font-size:11px;line-height:1.5;color:var(--muted);background:var(--surface2);border-radius:10px;padding:10px 12px;margin-top:8px}
 @media(max-width:850px){.hero-intro{grid-template-columns:1fr}.audience{grid-template-columns:1fr 1fr}.hero-copy h2{font-size:34px}}
 @media(max-width:580px){nav{padding:0 10px}.nt button{padding:6px 8px;font-size:11px}.nb span{display:none}.audience{grid-template-columns:1fr}.hero-copy{padding:24px}.hero-copy h2{font-size:30px}}
+
+.dashboard-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}
+.metric-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+.metric{background:#fff;border:1px solid var(--border);border-radius:16px;padding:15px}
+.metric span{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);font-weight:700}
+.metric strong{display:block;font:700 26px var(--mono);margin-top:5px}
+.filterbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.filterbar select,.filterbar input{padding:9px 11px;border:1px solid var(--border);border-radius:10px;background:#fff;font-family:var(--sans);font-size:12px}
+.insight{border-radius:16px;padding:17px;background:linear-gradient(135deg,#f0fbf5,#eef8fb);border:1px solid #dbece3;line-height:1.55}
+.insight strong{display:block;font-size:12px;margin-bottom:6px}
+.insight p{font-size:12px;color:var(--muted)}
+.trend-list{display:grid;gap:8px}
+.trend-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border:1px solid var(--border);border-radius:12px;background:#fff}
+.trend-item .name{font-size:12px;font-weight:700}.trend-item .meta{font-size:10px;color:var(--muted)}
+.trend-delta{font:700 13px var(--mono)}
+@media(max-width:850px){.dashboard-grid{grid-template-columns:1fr}.metric-row{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
@@ -161,6 +177,7 @@ nav{background:rgba(9,72,48,.95);backdrop-filter:blur(16px);color:#fff;padding:0
   <div class="nt">
     <button class="active" onclick="goPage('calcular',this)">Calcular</button>
     <button onclick="goPage('historico',this)">Histórico</button>
+    <button onclick="goPage('painel',this)">Meus IQAs</button>
     <button onclick="goPage('sobre',this)">Sobre</button>
     <button class="loginbtn" id="auth-btn" onclick="abrirAuth()">Entrar</button>
   </div>
@@ -282,6 +299,51 @@ nav{background:rgba(9,72,48,.95);backdrop-filter:blur(16px);color:#fff;padding:0
   </div>
 </div>
 
+<!-- PAINEL -->
+<div class="page" id="page-painel">
+  <div class="stitle">Meus IQAs</div>
+  <div class="metric-row">
+    <div class="metric"><span>Medições</span><strong id="m-total">0</strong></div>
+    <div class="metric"><span>IQA médio</span><strong id="m-media">—</strong></div>
+    <div class="metric"><span>Melhor IQA</span><strong id="m-max">—</strong></div>
+    <div class="metric"><span>Pior IQA</span><strong id="m-min">—</strong></div>
+  </div>
+  <div class="filterbar">
+    <select id="painel-local" onchange="renderPainel()"><option value="">Todos os locais</option></select>
+    <select id="painel-periodo" onchange="renderPainel()">
+      <option value="">Todo período</option>
+      <option value="30">Últimos 30 dias</option>
+      <option value="90">Últimos 90 dias</option>
+      <option value="365">Último ano</option>
+    </select>
+    <button class="btn bsec bsm" onclick="abrirManual()">+ Adicionar IQA antigo</button>
+  </div>
+  <div class="dashboard-grid">
+    <div class="card">
+      <div class="ch"><div class="ico">↗</div><h2>Evolução do IQA</h2></div>
+      <div class="cb">
+        <canvas id="painel-chart" height="280"></canvas>
+        <div id="painel-insight" class="insight" style="margin-top:14px"><strong>Leitura automática</strong><p>Adicione medições para gerar uma interpretação temporal.</p></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ico">◎</div><h2>Locais monitorados</h2></div>
+      <div class="cb"><div id="painel-locais" class="trend-list"></div></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:18px">
+    <div class="ch"><div class="ico">⇄</div><h2>Antes × Depois</h2></div>
+    <div class="cb">
+      <div class="filterbar">
+        <select id="cmp-a"></select>
+        <select id="cmp-b"></select>
+        <button class="btn bprim bsm" onclick="compararAntesDepois()">Comparar</button>
+      </div>
+      <div id="cmp-detail" class="tip">Escolha duas medições para comparar o IQA e, quando houver dados completos, os parâmetros que mais mudaram.</div>
+    </div>
+  </div>
+</div>
+
 <!-- SOBRE -->
 <div class="page" id="page-sobre">
   <div class="g2">
@@ -347,6 +409,7 @@ nav{background:rgba(9,72,48,.95);backdrop-filter:blur(16px);color:#fff;padding:0
     <input id="sv-resp" placeholder="Responsável / Técnico (opcional)">
     <input type="datetime-local" id="sv-data">
     <input id="sv-obs" placeholder="Observações (opcional)">
+    <div class="g2" style="gap:8px"><input type="number" step="any" id="sv-lat" placeholder="Latitude (opcional)"><input type="number" step="any" id="sv-lng" placeholder="Longitude (opcional)"></div>
     <div class="mbr">
       <button class="btn bprim" onclick="confirmarSalvar()">Salvar</button>
       <button class="btn bsec" onclick="fecharMo('ms')">Cancelar</button>
@@ -648,7 +711,9 @@ function confirmarSalvar(){
   const resp=document.getElementById('sv-resp').value||'';
   const data=document.getElementById('sv-data').value||new Date().toISOString().slice(0,16);
   const obs=document.getElementById('sv-obs').value||'';
-  hist.unshift({...last,local,resp,data,obs,id:Date.now()});
+  const lat=parseFloat(document.getElementById('sv-lat').value);
+  const lng=parseFloat(document.getElementById('sv-lng').value);
+  hist.unshift({...last,local,resp,data,obs,lat:Number.isFinite(lat)?lat:null,lng:Number.isFinite(lng)?lng:null,id:Date.now()});
   localStorage.setItem('iqaf-h',JSON.stringify(hist));
   fecharMo('ms');renderHist();alert(`✅ Medição salva: ${local}`);
 }
@@ -668,6 +733,7 @@ function renderHist(){
       <button class="hdel" onclick="delHist(${h.id})">✕</button></div>`;
   });
   desenharChart();
+  if(document.getElementById('page-painel')?.classList.contains('active')) renderPainel();
 }
 function delHist(id){
   if(!confirm('Remover medição?'))return;
@@ -790,6 +856,7 @@ function goPage(n,el){
   document.querySelectorAll('.nt button').forEach(b=>b.classList.remove('active'));
   document.getElementById('page-'+n).classList.add('active');el.classList.add('active');
   if(n==='historico')renderHist();
+  if(n==='painel')renderPainel();
 }
 function limpar(){
   Object.keys(PESOS).forEach(k=>{
@@ -877,6 +944,83 @@ async function resetSenha(){
   if(!email){alert('Digite seu e-mail primeiro.');return;}
   try{await firebase.auth().sendPasswordResetEmail(email);alert('E-mail de recuperação enviado.');}
   catch(e){alert('Não foi possível enviar: '+e.message)}
+}
+
+function painelFiltrado(){
+  let arr=[...hist];
+  const loc=document.getElementById('painel-local')?.value||'';
+  const dias=parseInt(document.getElementById('painel-periodo')?.value||'0',10);
+  if(loc) arr=arr.filter(h=>h.local===loc);
+  if(dias){
+    const cut=Date.now()-dias*86400000;
+    arr=arr.filter(h=>new Date(h.data).getTime()>=cut);
+  }
+  return arr.sort((a,b)=>new Date(a.data)-new Date(b.data));
+}
+function renderPainel(){
+  const sel=document.getElementById('painel-local');
+  if(!sel) return;
+  const atual=sel.value;
+  const locais=[...new Set(hist.map(h=>h.local).filter(Boolean))].sort();
+  sel.innerHTML='<option value="">Todos os locais</option>'+locais.map(x=>`<option value="${x.replace(/"/g,'&quot;')}">${x}</option>`).join('');
+  if(locais.includes(atual)) sel.value=atual;
+
+  const arr=painelFiltrado();
+  const vals=arr.map(h=>h.iqa).filter(Number.isFinite);
+  document.getElementById('m-total').textContent=arr.length;
+  document.getElementById('m-media').textContent=vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1):'—';
+  document.getElementById('m-max').textContent=vals.length?Math.max(...vals).toFixed(1):'—';
+  document.getElementById('m-min').textContent=vals.length?Math.min(...vals).toFixed(1):'—';
+  desenharPainelChart(arr);
+  renderPainelLocais();
+  preencherComparadores();
+  gerarInsight(arr);
+}
+function desenharPainelChart(arr){
+  const cv=document.getElementById('painel-chart'); if(!cv) return;
+  const ctx=cv.getContext('2d'),W=cv.offsetWidth||700,H=280;cv.width=W;cv.height=H;ctx.clearRect(0,0,W,H);
+  if(arr.length<2){ctx.fillStyle='#87938b';ctx.font='12px Space Grotesk';ctx.textAlign='center';ctx.fillText('Adicione ao menos 2 medições para visualizar a tendência',W/2,H/2);return;}
+  const pd={l:44,r:18,t:18,b:48},cw=W-pd.l-pd.r,ch=H-pd.t-pd.b;
+  const xs=i=>pd.l+(i/(arr.length-1))*cw, ys=v=>pd.t+ch-(v/100)*ch;
+  [0,19,36,51,79,100].forEach(v=>{ctx.strokeStyle='#e3ebe6';ctx.beginPath();ctx.moveTo(pd.l,ys(v));ctx.lineTo(pd.l+cw,ys(v));ctx.stroke();ctx.fillStyle='#819087';ctx.font='9px JetBrains Mono';ctx.textAlign='right';ctx.fillText(v,pd.l-6,ys(v)+3);});
+  ctx.beginPath();ctx.strokeStyle='#0c6b46';ctx.lineWidth=3;
+  arr.forEach((h,i)=>i?ctx.lineTo(xs(i),ys(h.iqa)):ctx.moveTo(xs(i),ys(h.iqa)));ctx.stroke();
+  arr.forEach((h,i)=>{ctx.beginPath();ctx.arc(xs(i),ys(h.iqa),5,0,Math.PI*2);ctx.fillStyle=cor(h.iqa);ctx.fill();ctx.fillStyle='#607068';ctx.font='9px Space Grotesk';ctx.textAlign='center';ctx.fillText(new Date(h.data).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}),xs(i),H-18);});
+}
+function gerarInsight(arr){
+  const el=document.getElementById('painel-insight'); if(!el) return;
+  if(arr.length<2){el.innerHTML='<strong>Leitura automática</strong><p>Adicione pelo menos duas medições para interpretar a tendência.</p>';return;}
+  const first=arr[0],lastI=arr[arr.length-1],delta=lastI.iqa-first.iqa;
+  let txt=delta>3?`O IQA aumentou ${delta.toFixed(1)} pontos no período selecionado.`:delta<-3?`O IQA caiu ${Math.abs(delta).toFixed(1)} pontos no período selecionado.`:'O IQA ficou relativamente estável no período selecionado.';
+  if(first.qis&&lastI.qis&&Object.keys(first.qis).length&&Object.keys(lastI.qis).length){
+    const diffs=Object.keys(PESOS).map(k=>({k,d:(lastI.qis[k]??0)-(first.qis[k]??0)})).sort((a,b)=>Math.abs(b.d)-Math.abs(a.d));
+    if(diffs.length){const top=diffs[0],nome=PESOS[top.k].lb;txt+=` A maior mudança entre os subíndices ocorreu em ${nome} (${top.d>=0?'+':''}${top.d.toFixed(1)} pontos de qi).`;}
+  }
+  el.innerHTML='<strong>Leitura automática</strong><p>'+txt+'</p>';
+}
+function renderPainelLocais(){
+  const box=document.getElementById('painel-locais'); if(!box) return;
+  const groups={};hist.forEach(h=>(groups[h.local]??=[]).push(h));
+  const rows=Object.entries(groups).map(([local,a])=>{a.sort((x,y)=>new Date(x.data)-new Date(y.data));const d=a[a.length-1].iqa-a[0].iqa;return {local,n:a.length,last:a[a.length-1].iqa,d};}).sort((a,b)=>b.n-a.n);
+  box.innerHTML=rows.length?rows.map(r=>`<div class="trend-item"><div><div class="name">${r.local}</div><div class="meta">${r.n} medição(ões) · último IQA ${r.last.toFixed(1)}</div></div><div class="trend-delta" style="color:${r.d>=0?'#168447':'#b72932'}">${r.d>=0?'+':''}${r.d.toFixed(1)}</div></div>`).join(''):'<div class="empt">Nenhum local monitorado ainda.</div>';
+}
+function preencherComparadores(){
+  const a=document.getElementById('cmp-a'),b=document.getElementById('cmp-b');if(!a||!b)return;
+  const opts=hist.map(h=>`<option value="${h.id}">${h.local} · ${new Date(h.data).toLocaleDateString('pt-BR')} · IQA ${h.iqa.toFixed(1)}</option>`).join('');
+  a.innerHTML=opts;b.innerHTML=opts;
+  if(hist.length>1){a.value=hist[hist.length-1].id;b.value=hist[0].id;}
+}
+function compararAntesDepois(){
+  const A=hist.find(h=>h.id===Number(document.getElementById('cmp-a').value));
+  const B=hist.find(h=>h.id===Number(document.getElementById('cmp-b').value));
+  if(!A||!B)return;
+  const d=B.iqa-A.iqa;
+  let html=`<strong>${A.local} → ${B.local}</strong><br>IQA: ${A.iqa.toFixed(1)} → ${B.iqa.toFixed(1)} (${d>=0?'+':''}${d.toFixed(1)} pontos).`;
+  if(A.qis&&B.qis&&Object.keys(A.qis).length&&Object.keys(B.qis).length){
+    const diffs=Object.keys(PESOS).map(k=>({k,d:(B.qis[k]??0)-(A.qis[k]??0)})).sort((x,y)=>Math.abs(y.d)-Math.abs(x.d)).slice(0,3);
+    html+='<br><br><strong>Parâmetros que mais mudaram:</strong><br>'+diffs.map(x=>`${PESOS[x.k].lb}: ${x.d>=0?'+':''}${x.d.toFixed(1)} qi`).join('<br>');
+  }
+  document.getElementById('cmp-detail').innerHTML=html;
 }
 
 // Mantém compatibilidade: qualquer salvamento passa também pela camada de sincronização.
