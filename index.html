@@ -319,8 +319,8 @@ const PESOS={
   ph:         {w:0.12,lb:'pH',                         un:'adimensional',ph:'ex: 7.2'},
   dbo:        {w:0.10,lb:'DBO₅',                       un:'mg/L O₂',     ph:'ex: 3.0'},
   temperatura:{w:0.10,lb:'Temperatura da Água',        un:'°C',          ph:'ex: 25.0'},
-  nitrogenio: {w:0.10,lb:'Nitrogênio Total',           un:'mg/L',        ph:'ex: 1.0'},
-  fosforo:    {w:0.10,lb:'Fósforo Total',              un:'mg/L',        ph:'ex: 0.1'},
+  nitrogenio: {w:0.10,lb:'Nitrogênio Total',           un:'mg/L N',      ph:'ex: 1.0'},
+  fosforo:    {w:0.10,lb:'Fósforo Total',              un:'mg/L P',      ph:'ex: 0.1'},
   turbidez:   {w:0.08,lb:'Turbidez',                   un:'UNT',         ph:'ex: 10'},
   solidos:    {w:0.08,lb:'Sólidos Totais',             un:'mg/L',        ph:'ex: 200'}
 };
@@ -332,7 +332,7 @@ const CONAMA={
   fosforo:    {cl2:0.1,    cl3:0.15,   t:'max',lb:'Fósforo Total (mg/L)'},
   nitrogenio: {cl2:null,   cl3:null,   t:'na', lb:'Nitrogênio Total'},
   turbidez:   {cl2:100,    cl3:null,   t:'max',lb:'Turbidez (UNT)'},
-  temperatura:{cl2:null,   cl3:null,   t:'na', lb:'Variação Temperatura'},
+  temperatura:{cl2:null,   cl3:null,   t:'na', lb:'Temperatura da água'},
   solidos:    {cl2:500,    cl3:500,    t:'max',lb:'Sólidos Totais (mg/L)'}
 };
 let last=null;
@@ -592,10 +592,10 @@ function delHist(id){
 }
 function exportCSV(){
   if(hist.length===0){alert('Nenhuma medição salva.');return;}
-  let csv='Local,Data,Responsavel,IQA,Classe,OD,Coliformes,pH,DBO,Temperatura,Nitrogenio,Fosforo,Turbidez,Solidos\n';
+  let csv='Local,Data,Responsavel,IQA,Classe,Altitude_m,OD,Coliformes,pH,DBO,Temperatura_Agua,Nitrogenio,Fosforo,Turbidez,Solidos\n';
   hist.forEach(h=>{
     const C=cl(h.iqa).lb,v=h.vals;
-    csv+=`"${h.local}","${h.data}","${h.resp||''}",${h.iqa.toFixed(2)},${C},${v.oxigenio},${v.coliformes},${v.ph},${v.dbo},${v.temperatura},${v.nitrogenio},${v.fosforo},${v.turbidez},${v.solidos}\n`;
+    csv+=`"${h.local}","${h.data}","${h.resp||''}",${h.iqa.toFixed(2)},${C},${h.altitude??''},${v.oxigenio},${v.coliformes},${v.ph},${v.dbo},${v.temperatura},${v.nitrogenio},${v.fosforo},${v.turbidez},${v.solidos}\n`;
   });
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
   a.download='iqa-historico.csv';a.click();
@@ -614,12 +614,12 @@ function desenharChart(){
   const xs=i=>pd.l+(i/(n-1))*cw;
   const ys=v=>pd.t+ch-(v/100)*ch;
   // bg faixas
-  [[79,100,'#1b6e2e'],[51,79,'#0d4275'],[36,51,'#b07d00'],[20,36,'#c04a00'],[0,20,'#a01515']].forEach(([mn,mx,c])=>{
+  [[79,100,'#1b6e2e'],[51,79,'#0d4275'],[36,51,'#b07d00'],[19,36,'#c04a00'],[0,19,'#a01515']].forEach(([mn,mx,c])=>{
     ctx.fillStyle=c+'15';ctx.fillRect(pd.l,ys(mx),cw,ys(mn)-ys(mx));
   });
   // grid
   ctx.strokeStyle='#ddd';ctx.lineWidth=1;
-  [0,20,36,51,79,100].forEach(v=>{
+  [0,19,36,51,79,100].forEach(v=>{
     ctx.beginPath();ctx.moveTo(pd.l,ys(v));ctx.lineTo(pd.l+cw,ys(v));ctx.stroke();
     ctx.fillStyle='#999';ctx.font='9px JetBrains Mono';ctx.textAlign='right';ctx.fillText(v,pd.l-5,ys(v)+3);
   });
@@ -657,6 +657,7 @@ function gerarLaudo(){
     <div class="lf"><strong>Data/Hora</strong>${now.toLocaleString('pt-BR')}</div>
     <div class="lf"><strong>Método</strong>IQA — Brown et al. (1970) / CETESB</div>
     <div class="lf"><strong>Referência Legal</strong>CONAMA 357/2005</div>
+    <div class="lf"><strong>Altitude usada no OD</strong>${last.altitude} m</div>
     <div class="lf"><strong>Software</strong>IQA-Fácil v2</div>`;
   const ab=document.getElementById('liab');
   ab.style.color=CR;ab.style.borderColor=CR;ab.style.background=CR+'10';
@@ -712,12 +713,13 @@ function limpar(){
     const i=document.getElementById(`i-${k}`);if(i){i.value='';i.classList.remove('err');}
     const p=document.getElementById(`p-${k}`);if(p)p.classList.remove('show');
   });
+  const alt=document.getElementById('i-altitude');if(alt){alt.value='';alt.classList.remove('err');}
   document.getElementById('rph').style.display='block';
   document.getElementById('rm').style.display='none';
   last=null;
   const al=document.getElementById('alert-campos');
   al.style.background='#e8f3ed';al.style.borderLeftColor='var(--accent)';al.style.color='var(--accent)';
-  al.textContent='Preencha os 9 parâmetros e clique em Calcular IQA.';al.classList.add('show');
+  al.textContent='Preencha os 9 parâmetros, informe a altitude e clique em Calcular IQA.';al.classList.add('show');
 }
 
 renderInputs();renderHist();
