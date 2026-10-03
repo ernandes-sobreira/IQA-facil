@@ -10,6 +10,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="./firebase-config.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 :root {
   --bg:#f4f8f5;--surface:#fff;--surface2:#f6faf7;--border:#dce8df;
@@ -169,6 +171,9 @@ nav{background:rgba(9,72,48,.95);backdrop-filter:blur(16px);color:#fff;padding:0
 .trend-item .name{font-size:12px;font-weight:700}.trend-item .meta{font-size:10px;color:var(--muted)}
 .trend-delta{font:700 13px var(--mono)}
 @media(max-width:850px){.dashboard-grid{grid-template-columns:1fr}.metric-row{grid-template-columns:1fr 1fr}}
+
+#painel-map{height:340px;border-radius:14px;overflow:hidden;border:1px solid var(--border)}
+.map-empty{height:340px;display:grid;place-items:center;color:var(--muted);font-size:12px;background:var(--surface2);border-radius:14px}
 </style>
 </head>
 <body>
@@ -329,6 +334,12 @@ nav{background:rgba(9,72,48,.95);backdrop-filter:blur(16px);color:#fff;padding:0
     <div class="card">
       <div class="ch"><div class="ico">◎</div><h2>Locais monitorados</h2></div>
       <div class="cb"><div id="painel-locais" class="trend-list"></div></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:18px">
+    <div class="ch"><div class="ico">⌖</div><h2>Mapa dos pontos monitorados</h2></div>
+    <div class="cb">
+      <div id="painel-map-wrap"><div class="map-empty">Salve medições com latitude e longitude para visualizar os pontos no mapa.</div></div>
     </div>
   </div>
   <div class="card" style="margin-top:18px">
@@ -975,6 +986,7 @@ function renderPainel(){
   renderPainelLocais();
   preencherComparadores();
   gerarInsight(arr);
+  renderMapa(arr);
 }
 function desenharPainelChart(arr){
   const cv=document.getElementById('painel-chart'); if(!cv) return;
@@ -997,6 +1009,27 @@ function gerarInsight(arr){
     if(diffs.length){const top=diffs[0],nome=PESOS[top.k].lb;txt+=` A maior mudança entre os subíndices ocorreu em ${nome} (${top.d>=0?'+':''}${top.d.toFixed(1)} pontos de qi).`;}
   }
   el.innerHTML='<strong>Leitura automática</strong><p>'+txt+'</p>';
+}
+let _iqaMap=null;
+function renderMapa(arr){
+  const wrap=document.getElementById('painel-map-wrap'); if(!wrap) return;
+  const pts=arr.filter(h=>Number.isFinite(h.lat)&&Number.isFinite(h.lng));
+  if(!pts.length){
+    if(_iqaMap){_iqaMap.remove();_iqaMap=null;}
+    wrap.innerHTML='<div class="map-empty">Salve medições com latitude e longitude para visualizar os pontos no mapa.</div>';
+    return;
+  }
+  wrap.innerHTML='<div id="painel-map"></div>';
+  _iqaMap=L.map('painel-map',{scrollWheelZoom:false});
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(_iqaMap);
+  const bounds=[];
+  pts.forEach(h=>{
+    const c=cor(h.iqa);
+    const marker=L.circleMarker([h.lat,h.lng],{radius:9,color:c,fillColor:c,fillOpacity:.78,weight:2}).addTo(_iqaMap);
+    marker.bindPopup(`<strong>${h.local}</strong><br>IQA ${h.iqa.toFixed(1)} · ${cl(h.iqa).lb}<br>${new Date(h.data).toLocaleDateString('pt-BR')}`);
+    bounds.push([h.lat,h.lng]);
+  });
+  if(bounds.length===1)_iqaMap.setView(bounds[0],13);else _iqaMap.fitBounds(bounds,{padding:[28,28]});
 }
 function renderPainelLocais(){
   const box=document.getElementById('painel-locais'); if(!box) return;
