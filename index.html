@@ -3,11 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="no-referrer">
 <title>IQA-Fácil · Qualidade da Água</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" integrity="sha384-ZZ1pncU3bQe8y31yfZdMFdSpttDoPmOZg2wguVK9almUodir1PghgT0eY7Mrty8H" crossorigin="anonymous" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" integrity="sha384-vtjasyidUo0kW94K5MXDXntzOJpQgBKXmE7e2Ga4LG0skTTLeBi97eFAXsqewJjw" crossorigin="anonymous" defer></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous" defer></script>
 <style>
 :root {
   --bg:#f7faf8;--surface:#fff;--surface2:#f3f8f5;--border:#e4ece7;
@@ -198,6 +200,34 @@ linear-gradient(135deg,#f0fbf5,#e9f8f2 56%,#edf9fb);color:var(--text);border:1px
 .auth-error{display:none;padding:10px 12px;border-radius:11px;background:#fff0f0;color:#a43a3a;font-size:12px;margin-bottom:12px}.auth-error.show{display:block}
 .auth-ok{display:none;padding:10px 12px;border-radius:11px;background:#edf9f1;color:#26724d;font-size:12px;margin-bottom:12px}.auth-ok.show{display:block}
 @media(max-width:720px){.auth-grid{grid-template-columns:1fr}.auth-side{display:none}.auth-main{padding:26px}.auth-shell{max-width:94%!important}}
+
+.nt{min-width:0}.nt:not(.na){flex:1;justify-content:flex-end;margin-left:10px}.na{flex:0 0 auto;margin-left:4px}@media(max-width:580px){.nt:not(.na){justify-content:flex-start}.nb h1{font-size:14px}}
+.nt{overflow-x:auto;scrollbar-width:none;align-items:center}.nt::-webkit-scrollbar{display:none}.nt button{white-space:nowrap;flex:0 0 auto}
+.perfilbtn{width:38px;height:38px;padding:0!important;border-radius:50%!important;background:linear-gradient(135deg,#eaf8f0,#e3f1fb)!important;color:var(--accent)!important;border:1px solid #d5e8dc!important;font-weight:800!important;font-size:13px!important;margin-left:4px}
+.perfilbtn.on{background:linear-gradient(135deg,#218f60,#35ad75)!important;color:#fff!important;border-color:transparent!important}
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:#173128;color:#fff;padding:12px 18px;border-radius:14px;font-size:13px;font-weight:600;box-shadow:0 14px 40px rgba(0,0,0,.22);opacity:0;pointer-events:none;transition:.25s;z-index:400;max-width:min(92vw,460px);text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}.toast.err{background:#a43a3a}
+.md{max-height:92vh;overflow-y:auto}
+.md textarea{width:100%;padding:8px 11px;font-family:var(--sans);font-size:13px;border:1.5px solid var(--border);border-radius:5px;outline:none;margin-bottom:9px;resize:vertical;min-height:70px}
+.md textarea:focus,.md select:focus{border-color:var(--accent)}
+.flab{display:block;font-size:11px;font-weight:700;color:#50645a;margin:2px 0 4px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:8px}.frow3{display:grid;grid-template-columns:1fr 90px;gap:8px}
+@media(max-width:520px){.frow{grid-template-columns:1fr}}
+.fsec{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin:10px 0 8px;padding-top:10px;border-top:1px solid var(--border)}
+.contabox{font-size:12px;line-height:1.5;color:#52675c;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin-bottom:12px}
+.dotok{display:inline-block;width:8px;height:8px;border-radius:50%;background:#22c55e;margin-right:4px}
+.tagc{font-size:10px;font-weight:600;color:var(--accent);background:var(--accent2);border-radius:8px;padding:1px 6px;margin-left:4px}
+.imp-drop{border:2px dashed #cfe3d7;border-radius:18px;padding:26px 18px;text-align:center;background:linear-gradient(135deg,#f6fcf8,#f3f9fd);cursor:pointer;transition:.15s}
+.imp-drop:hover,.imp-drop.over{border-color:var(--accent);background:var(--accent2)}
+.imp-drop strong{display:block;font-size:14px;margin-bottom:4px}.imp-drop span{font-size:12px;color:var(--muted)}
+.imp-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.imp-step{font-size:12px;line-height:1.5;color:#52675c;background:#fff;border:1px solid var(--border);border-radius:14px;padding:12px}
+.imp-step b{display:block;color:var(--text);margin-bottom:2px}
+@media(max-width:680px){.imp-steps{grid-template-columns:1fr}}
+.imp-resumo{font-size:12px;margin:14px 0 8px;color:#52675c}
+.imp-scroll{max-height:340px;overflow:auto;border:1px solid var(--border);border-radius:10px}
+.imp-t th{position:sticky;top:0}.imp-bad td{background:#fff7f5;color:#9a4a3a}
+.btn:disabled{opacity:.55;cursor:not-allowed}
 </style>
 <script>window.IQA_API_BASE="https://iqa-facil-api.onrender.com";</script>
 </head>
@@ -205,11 +235,14 @@ linear-gradient(135deg,#f0fbf5,#e9f8f2 56%,#edf9fb);color:var(--text);border:1px
 <nav>
   <div class="nb"><div class="dot"></div><div><h1>IQA-Fácil</h1><span>NSF/CETESB · Brown et al. 1970</span></div></div>
   <div class="nt">
-    <button class="active" onclick="goPage('calcular',this)">Calcular</button>
-    <button onclick="goPage('historico',this)">Histórico</button>
-    <button onclick="goPage('painel',this)">Meus IQAs</button>
-    <button onclick="goPage('sobre',this)">Sobre</button>
+    <button class="active" data-pg="calcular" onclick="goPage('calcular',this)">Calcular</button>
+    <button data-pg="historico" onclick="goPage('historico',this)">Histórico</button>
+    <button data-pg="painel" onclick="goPage('painel',this)">Meus IQAs</button>
+    <button data-pg="sobre" onclick="goPage('sobre',this)">Sobre</button>
+  </div>
+  <div class="nt na">
     <button class="loginbtn" id="auth-btn" onclick="abrirAuth()">Entrar</button>
+    <button class="perfilbtn" id="perfil-btn" onclick="abrirPerfil()" title="Meu perfil" aria-label="Meu perfil">👤</button>
   </div>
 </nav>
 
@@ -223,6 +256,7 @@ linear-gradient(135deg,#f0fbf5,#e9f8f2 56%,#edf9fb);color:var(--text);border:1px
       <div class="hero-actions">
         <button class="btn" style="background:linear-gradient(135deg,#218f60,#35ad75);color:#fff;box-shadow:0 10px 24px rgba(31,138,91,.18)" onclick="document.getElementById('pc').scrollIntoView({behavior:'smooth'})">Calcular meu IQA</button>
         <button class="btn" style="background:#fff;color:var(--accent);border:1px solid #d9eae0" onclick="abrirManual()">Já tenho um IQA pronto</button>
+        <button class="btn" style="background:#fff;color:#176b9c;border:1px solid #d5e6f2" onclick="document.getElementById('imp-card').scrollIntoView({behavior:'smooth'})">Tenho uma planilha</button>
       </div>
     </section>
     <aside class="hero-guide">
@@ -270,10 +304,10 @@ linear-gradient(135deg,#f0fbf5,#e9f8f2 56%,#edf9fb);color:var(--text);border:1px
           <div class="iqadt" id="iqadt"></div>
         </div>
         <div class="fbar">
-          <div class="fc fot dim" id="f-ot">Ótima<span class="rng">79–100</span></div>
-          <div class="fc fbo dim" id="f-bo">Boa<span class="rng">51–79</span></div>
-          <div class="fc fra dim" id="f-ra">Razoável<span class="rng">36–51</span></div>
-          <div class="fc fru dim" id="f-ru">Ruim<span class="rng">19–36</span></div>
+          <div class="fc fot dim" id="f-ot">Ótima<span class="rng">&gt;79–100</span></div>
+          <div class="fc fbo dim" id="f-bo">Boa<span class="rng">&gt;51–79</span></div>
+          <div class="fc fra dim" id="f-ra">Razoável<span class="rng">&gt;36–51</span></div>
+          <div class="fc fru dim" id="f-ru">Ruim<span class="rng">&gt;19–36</span></div>
           <div class="fc fmr dim" id="f-mr">M.Ruim<span class="rng">0–19</span></div>
         </div>
         <div class="cb">
@@ -288,7 +322,7 @@ linear-gradient(135deg,#f0fbf5,#e9f8f2 56%,#edf9fb);color:var(--text);border:1px
           <div id="tab-cn" style="display:none;">
             <table class="ct"><thead><tr><th>Parâmetro</th><th>Medido</th><th>CONAMA Cl.2</th><th>CONAMA Cl.3</th><th>Status Cl.2</th></tr></thead>
             <tbody id="cnb"></tbody></table>
-            <p style="font-size:10px;color:var(--muted);margin-top:8px;">CONAMA 357/2005 — Águas doces. Parâmetros sem limite explícito: N/A.</p>
+            <p style="font-size:10px;color:var(--muted);margin-top:8px;line-height:1.5">CONAMA 357/2005, águas doces. Fósforo: limites de ambiente lótico (em lagos e reservatórios os limites são menores). Sólidos: a resolução limita sólidos dissolvidos totais, aqui comparados com os sólidos totais informados. Coliformes na classe 3: limite de recreação de contato secundário. Sem limite na resolução: N/A.</p>
           </div>
           <div class="brow">
             <button class="btn bsec bsm" onclick="abrirSalvar()">💾 Salvar Histórico</button>
@@ -299,13 +333,35 @@ linear-gradient(135deg,#f0fbf5,#e9f8f2 56%,#edf9fb);color:var(--text);border:1px
       </div>
     </div>
   </div>
+
+  <div class="card" id="imp-card" style="margin-top:22px">
+    <div class="ch"><div class="ico">▦</div><h2>Calcular vários de uma vez com planilha</h2></div>
+    <div class="cb">
+      <div class="imp-steps">
+        <div class="imp-step"><b>1. Baixe o modelo</b>Uma linha por amostra, com os nove parâmetros, a altitude e o local de coleta.</div>
+        <div class="imp-step"><b>2. Preencha e envie</b>Mantenha os nomes das colunas. Vírgula ou ponto decimal, tanto faz.</div>
+        <div class="imp-step"><b>3. Confira e salve</b>O IQA de cada linha é calculado na hora. Você escolhe o que vai para o histórico.</div>
+      </div>
+      <div class="brow" style="margin:0 0 14px">
+        <button class="btn bprim bsm" onclick="baixarModelo('xlsx')">⬇ Baixar modelo Excel (.xlsx)</button>
+        <button class="btn bsec bsm" onclick="baixarModelo('csv')">⬇ Modelo CSV</button>
+      </div>
+      <div class="imp-drop" id="imp-drop" onclick="escolherPlanilha()" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="soltarPlanilha(event)">
+        <strong>Clique para enviar a planilha preenchida</strong>
+        <span>ou arraste o arquivo para cá · .xlsx ou .csv · até 2000 linhas</span>
+      </div>
+      <input type="file" id="imp-file" accept=".xlsx,.xls,.csv,.txt" style="display:none" onchange="lerPlanilha(this.files[0])">
+      <div class="tip">O arquivo é lido no seu navegador. Nada é enviado antes de você clicar em salvar. Resultados como "&lt;1" não são convertidos em número: a linha fica marcada para você decidir.</div>
+      <div id="imp-out"></div>
+    </div>
+  </div>
 </div>
 
 <!-- HISTÓRICO -->
 <div class="page" id="page-historico">
   <div class="stitle">Histórico de Medições</div>
   <div style="background:#fff8e1;border:1px solid #ffe082;border-left:4px solid #f9a825;border-radius:6px;padding:11px 16px;margin-bottom:16px;font-size:12px;color:#5d4037;line-height:1.6;">
-    💡 <strong>Como seus dados são salvos:</strong> sem login, o histórico fica neste navegador. Ao entrar na sua conta, as medições são enviadas para a nuvem e podem ser recuperadas em outros dispositivos. Você também pode exportar um CSV quando quiser.
+    💡 <strong>Como seus dados são salvos:</strong> sem login, o histórico fica neste navegador. Ao entrar na sua conta, as medições são enviadas para a nuvem e podem ser recuperadas em outros dispositivos. Ao sair da conta, as medições já enviadas saem deste navegador e continuam na nuvem. Você também pode exportar Excel ou CSV quando quiser.
   </div>
   <div class="g2">
     <div class="card">
@@ -314,9 +370,10 @@ linear-gradient(135deg,#f0fbf5,#e9f8f2 56%,#edf9fb);color:var(--text);border:1px
         <div class="compare-toolbar">
           <button class="btn bprim bsm" onclick="compararSelecionados()">Comparar selecionados</button>
           <button class="btn bsec bsm" onclick="abrirManual()">+ Adicionar IQA antigo</button>
+          <button class="btn bsec bsm" onclick="exportXLSX()">⬇ Excel</button>
           <button class="btn bsec bsm" onclick="exportCSV()">⬇ CSV</button>
         </div>
-        <div class="tip">Marque dois ou mais registros para comparar. Você também pode incluir um IQA calculado anteriormente, mesmo que tenha sido feito fora desta plataforma.</div>
+        <div class="tip">Clique em um registro para abrir o laudo. Marque dois ou mais para comparar. Você também pode incluir um IQA calculado anteriormente, mesmo que tenha sido feito fora desta plataforma.</div>
         <div id="hl" style="margin-top:12px;"></div>
         <div id="cmp-out"></div>
       </div>
@@ -437,18 +494,15 @@ linear-gradient(135deg,#f0fbf5,#e9f8f2 56%,#edf9fb);color:var(--text);border:1px
         <label class="auth-label" for="auth-email">E-mail</label>
         <input type="email" id="auth-email" autocomplete="email" placeholder="nome@exemplo.com">
         <label class="auth-label" for="auth-pass">Senha</label>
-        <input type="password" id="auth-pass" autocomplete="current-password" placeholder="mínimo de 6 caracteres">
+        <input type="password" id="auth-pass" autocomplete="current-password" placeholder="mínimo de 8 caracteres para contas novas">
         <div class="auth-actions">
           <button class="btn bprim" onclick="loginEmail()">Entrar</button>
           <button class="btn bsec" onclick="criarConta()">Criar conta</button>
         </div>
-        <div style="font-size:10px;color:var(--muted);line-height:1.45;margin-top:9px">Já tentou criar a conta antes? Use <strong>Entrar</strong> primeiro. Repetir o cadastro muitas vezes pode acionar o limite temporário de e-mails do Supabase.</div>
+        <div style="font-size:10px;color:var(--muted);line-height:1.45;margin-top:9px">Já tentou criar a conta antes? Use <strong>Entrar</strong> primeiro. Depois de entrar, clique no círculo ao lado do menu para editar seu perfil.</div>
         <div class="auth-foot">
           <button class="auth-link" onclick="resetSenha()">Esqueci minha senha</button>
-          <div>
-            <button class="auth-link" onclick="sairConta()">Sair</button>
-            <button class="auth-link" style="margin-left:12px;color:var(--muted)" onclick="fecharMo('mauth')">Continuar sem conta</button>
-          </div>
+          <button class="auth-link" style="color:var(--muted)" onclick="fecharMo('mauth')">Continuar sem conta</button>
         </div>
       </section>
     </div>
@@ -459,29 +513,99 @@ linear-gradient(135deg,#f0fbf5,#e9f8f2 56%,#edf9fb);color:var(--text);border:1px
 <div class="mo" id="mmanual"><div class="md">
   <h3>＋ Adicionar IQA já calculado</h3>
   <p>Use para trazer resultados antigos ou feitos em outro sistema. Esse registro entra no histórico e pode ser comparado, mas não terá os nove subíndices se você informar apenas o IQA final.</p>
-  <input id="man-local" placeholder="Local / ponto de coleta">
+  <input id="man-local" maxlength="160" placeholder="Local / ponto de coleta">
   <input type="date" id="man-data">
   <input type="number" id="man-iqa" min="0" max="100" step="0.1" placeholder="IQA (0 a 100)">
-  <input id="man-obs" placeholder="Observação / fonte do resultado">
+  <input id="man-obs" maxlength="1000" placeholder="Observação / fonte do resultado">
   <div class="mbr"><button class="btn bprim" onclick="salvarManual()">Salvar no histórico</button><button class="btn bsec" onclick="fecharMo('mmanual')">Cancelar</button></div>
 </div></div>
 
-<!-- MODAL SALVAR -->
+<!-- MODAL DADOS DA COLETA -->
 <div class="mo" id="ms">
-  <div class="md">
-    <h3>💾 Salvar Medição</h3>
-    <p>Adicione local e data para o registro histórico.</p>
-    <input id="sv-local" placeholder="Local / Ponto (ex: Rio Paraguai — Cáceres)">
-    <input id="sv-resp" placeholder="Responsável / Técnico (opcional)">
-    <input type="datetime-local" id="sv-data">
-    <input id="sv-obs" placeholder="Observações (opcional)">
-    <div class="g2" style="gap:8px"><input type="number" step="any" id="sv-lat" placeholder="Latitude (opcional)"><input type="number" step="any" id="sv-lng" placeholder="Longitude (opcional)"></div>
+  <div class="md" style="max-width:560px">
+    <h3 id="ms-titulo">💾 Salvar medição</h3>
+    <p id="ms-sub">Informe onde e quando a amostra foi coletada.</p>
+    <label class="flab" for="sv-local">Local / ponto de coleta</label>
+    <input id="sv-local" maxlength="160" placeholder="ex: Ponto 1, ponte da rodovia">
+    <div class="frow">
+      <div><label class="flab" for="sv-corpo">Corpo hídrico</label><input id="sv-corpo" maxlength="120" placeholder="ex: Rio Paraguai"></div>
+      <div><label class="flab" for="sv-ambiente">Ambiente</label><select id="sv-ambiente"></select></div>
+    </div>
+    <div class="frow3">
+      <div><label class="flab" for="sv-municipio">Município</label><input id="sv-municipio" maxlength="100" placeholder="ex: Cáceres"></div>
+      <div><label class="flab" for="sv-uf">UF</label><select id="sv-uf"></select></div>
+    </div>
+    <div class="frow">
+      <div><label class="flab" for="sv-lat">Latitude</label><input type="number" step="any" min="-90" max="90" id="sv-lat" placeholder="ex: -16.0711"></div>
+      <div><label class="flab" for="sv-lng">Longitude</label><input type="number" step="any" min="-180" max="180" id="sv-lng" placeholder="ex: -57.6789"></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;margin:-2px 0 10px;flex-wrap:wrap">
+      <button class="btn bsec bsm" type="button" onclick="usarLocalizacao()">⌖ Usar minha localização atual</button>
+      <span id="sv-geo-msg" style="font-size:11px;color:var(--muted)"></span>
+    </div>
+    <div class="frow">
+      <div><label class="flab" for="sv-data">Data e hora da coleta</label><input type="datetime-local" id="sv-data"></div>
+      <div><label class="flab" for="sv-resp">Responsável pela coleta</label><input id="sv-resp" maxlength="160" placeholder="nome"></div>
+    </div>
+    <label class="flab" for="sv-obs">Observações</label>
+    <input id="sv-obs" maxlength="1000" placeholder="ex: após chuva, água turva, margem direita">
     <div class="mbr">
-      <button class="btn bprim" onclick="confirmarSalvar()">Salvar</button>
+      <button class="btn bprim" id="ms-ok" onclick="confirmarColeta()">Salvar</button>
       <button class="btn bsec" onclick="fecharMo('ms')">Cancelar</button>
     </div>
   </div>
 </div>
+
+<!-- MODAL PERFIL -->
+<div class="mo" id="mperfil">
+  <div class="md" style="max-width:560px">
+    <h3>👤 Meu perfil</h3>
+    <p>Esses dados entram como responsável nas medições e no laudo. Tudo é opcional.</p>
+    <div class="contabox" id="pf-conta"></div>
+    <label class="flab" for="pf-nome">Nome completo</label>
+    <input id="pf-nome" maxlength="120" autocomplete="name" placeholder="como deve aparecer no laudo">
+    <div class="frow">
+      <div><label class="flab" for="pf-instituicao">Instituição</label><input id="pf-instituicao" maxlength="160" placeholder="ex: UNEMAT"></div>
+      <div><label class="flab" for="pf-funcao">Função / cargo</label><input id="pf-funcao" maxlength="120" placeholder="ex: professor, técnico, estudante"></div>
+    </div>
+    <div class="frow">
+      <div><label class="flab" for="pf-registro">Registro profissional</label><input id="pf-registro" maxlength="60" placeholder="ex: CRBio, CRQ (opcional)"></div>
+      <div><label class="flab" for="pf-telefone">Telefone</label><input id="pf-telefone" maxlength="30" autocomplete="tel" placeholder="opcional"></div>
+    </div>
+    <div class="frow3">
+      <div><label class="flab" for="pf-municipio">Município onde atua</label><input id="pf-municipio" maxlength="100" placeholder="preenche as coletas automaticamente"></div>
+      <div><label class="flab" for="pf-uf">UF</label><select id="pf-uf"></select></div>
+    </div>
+    <label class="flab" for="pf-sobre">Mais informações</label>
+    <textarea id="pf-sobre" maxlength="1000" placeholder="grupo de pesquisa, projeto, laboratório, links, o que quiser registrar"></textarea>
+    <div id="pf-msg" style="font-size:11px;color:#a0651a;min-height:14px;margin-bottom:6px"></div>
+    <div class="mbr">
+      <button class="btn bprim" onclick="salvarPerfil()">Salvar perfil</button>
+      <button class="btn bsec" onclick="fecharMo('mperfil')">Fechar</button>
+    </div>
+    <div id="pf-logado" style="display:none;justify-content:space-between;gap:10px;margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">
+      <button class="auth-link" onclick="abrirNovaSenha()">Alterar senha</button>
+      <button class="auth-link" style="color:#a43a3a" onclick="sairConta()">Sair da conta</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL NOVA SENHA -->
+<div class="mo" id="msenha">
+  <div class="md" style="max-width:420px">
+    <h3>🔒 Nova senha</h3>
+    <p>Use pelo menos 8 caracteres.</p>
+    <input type="password" id="ns-1" autocomplete="new-password" placeholder="nova senha">
+    <input type="password" id="ns-2" autocomplete="new-password" placeholder="repita a nova senha">
+    <div id="ns-msg" style="font-size:11px;color:#a0651a;min-height:14px;margin-bottom:6px"></div>
+    <div class="mbr">
+      <button class="btn bprim" onclick="salvarNovaSenha()">Salvar senha</button>
+      <button class="btn bsec" onclick="fecharMo('msenha')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <!-- MODAL LAUDO -->
 <div class="mo" id="modal-laudo">
@@ -491,7 +615,7 @@ linear-gradient(135deg,#f0fbf5,#e9f8f2 56%,#edf9fb);color:var(--text);border:1px
         <div><div class="lt">Laudo de Qualidade da Água</div><div class="ls">IQA — Método NSF/CETESB · Brown et al. (1970)</div></div>
         <div style="text-align:right;font-size:10px;color:var(--muted);font-family:var(--mono);" id="ldt"></div>
       </div>
-      <div class="lsec"><h3>Identificação</h3><div class="lgrid" id="lid"></div></div>
+      <div class="lsec"><h3>Identificação da coleta</h3><div class="lgrid" id="lid"></div></div>
       <div class="lsec"><h3>Resultado</h3>
         <div class="liqab" id="liab">
           <div class="liqan" id="liqn"></div>
@@ -522,8 +646,53 @@ linear-gradient(135deg,#f0fbf5,#e9f8f2 56%,#edf9fb);color:var(--text);border:1px
 </div>
 
 <script>
+/* ===================== UTILIDADES ===================== */
 const clampQi=q=>Math.max(0,Math.min(100,q));
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const sid=id=>String(id??'').replace(/[^\w-]/g,'');
+const $=id=>document.getElementById(id);
+const store={
+  get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch{return d;}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true;}catch{toast('Não foi possível gravar neste navegador (armazenamento cheio ou bloqueado).','err');return false;}},
+  del(k){try{localStorage.removeItem(k);}catch{}}
+};
+const pad2=n=>String(n).padStart(2,'0');
+// Data e hora no fuso do usuário, no formato aceito por <input type="datetime-local">.
+function agoraLocal(comHora=true){
+  const d=new Date();
+  const dia=`${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+  return comHora?`${dia}T${pad2(d.getHours())}:${pad2(d.getMinutes())}`:dia;
+}
+// Datas só com dia (AAAA-MM-DD) são lidas no fuso local, sem recuar um dia.
+function dt(s){
+  if(s instanceof Date) return s;
+  const t=String(s??'');
+  return new Date(/^\d{4}-\d{2}-\d{2}$/.test(t)?t+'T00:00':t);
+}
+function dataLocalTxt(s){
+  const d=dt(s);if(!s||Number.isNaN(d.getTime())) return '';
+  const dia=`${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+  return d.getHours()||d.getMinutes()?`${dia} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`:dia;
+}
+function fmtData(s,soDia=false){
+  const d=dt(s);
+  if(Number.isNaN(d.getTime())) return 'data não informada';
+  if(soDia||/^\d{4}-\d{2}-\d{2}$/.test(String(s))||(!d.getHours()&&!d.getMinutes())) return d.toLocaleDateString('pt-BR');
+  return d.toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'});
+}
+let toastTimer=null;
+function toast(msg,tipo='ok'){
+  const t=$('toast');
+  t.textContent=msg;t.className='toast show '+tipo;
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),4200);
+}
+function baixar(blob,nome){
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=nome;
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+}
+const fmtN=(v,casas)=>Number.isFinite(v)?v.toLocaleString('pt-BR',{maximumFractionDigits:casas??6}):'';
 
+/* ===================== MÉTODO ===================== */
 const PESOS={
   oxigenio:   {w:0.17,lb:'Oxigênio Dissolvido',        un:'mg/L',        ph:'ex: 8.0'},
   coliformes: {w:0.15,lb:'Coliformes Termotolerantes', un:'NMP/100mL',   ph:'ex: 1000'},
@@ -540,14 +709,16 @@ const CONAMA={
   dbo:        {cl2:5,      cl3:10,     t:'max',lb:'DBO₅ (mg/L)'},
   oxigenio:   {cl2:5,      cl3:4,      t:'min',lb:'OD (mg/L)'},
   coliformes: {cl2:1000,   cl3:2500,   t:'max',lb:'Colif. Termotol. (NMP/100mL)'},
-  fosforo:    {cl2:0.1,    cl3:0.15,   t:'max',lb:'Fósforo Total (mg/L)'},
+  fosforo:    {cl2:0.1,    cl3:0.15,   t:'max',lb:'Fósforo Total (mg/L), lótico'},
   nitrogenio: {cl2:null,   cl3:null,   t:'na', lb:'Nitrogênio Total'},
-  turbidez:   {cl2:100,    cl3:null,   t:'max',lb:'Turbidez (UNT)'},
+  turbidez:   {cl2:100,    cl3:100,    t:'max',lb:'Turbidez (UNT)'},
   temperatura:{cl2:null,   cl3:null,   t:'na', lb:'Temperatura da água'},
-  solidos:    {cl2:500,    cl3:500,    t:'max',lb:'Sólidos Totais (mg/L)'}
+  solidos:    {cl2:500,    cl3:500,    t:'max',lb:'Sólidos (mg/L), limite de dissolvidos'}
 };
 let last=null;
-let hist=JSON.parse(localStorage.getItem('iqaf-h')||'[]');
+let hist=(store.get('iqaf-h',[])||[]).filter(h=>h&&Number.isFinite(Number(h.iqa))).map(h=>({...h,id:sid(h.id)||novoId(),iqa:Number(h.iqa)}));
+function novoId(){return 'l'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
+function persistHist(){return store.set('iqaf-h',hist);}
 
 function cqi(k,v,ctx={}){
   const x=Number(v);
@@ -586,7 +757,8 @@ function cqi(k,v,ctx={}){
     else if(p<=8) q=-427.8+142.05*p-9.695*p**2;
     else if(p<=8.5) q=216-16*p;
     else if(p<=9) q=1415823*Math.exp(-1.1507*p);
-    else if(p<=10) q=228-27*p;
+    // Corrigido: era 228-27*p, que dava qi negativo (IQA zero) entre pH 9 e 10.
+    else if(p<=10) q=288-27*p;
     else if(p<=12) q=633-106.5*p+4.5*p**2;
     else q=3;
     return clampQi(q);
@@ -595,7 +767,8 @@ function cqi(k,v,ctx={}){
   if(k==='dbo'){
     const c=Math.max(x,0); let q;
     if(c<=5) q=99.96*Math.exp(-0.1232728*c);
-    else if(c<=15) q=104.67-31.5463*Math.log10(c);
+    // Corrigido: logaritmo natural (com log10 a curva saltava de 54 para 83 em 5 mg/L).
+    else if(c<=15) q=104.67-31.5463*Math.log(c);
     else if(c<=30) q=4394.91*c**(-1.99809);
     else q=2;
     return clampQi(q);
@@ -604,7 +777,8 @@ function cqi(k,v,ctx={}){
   if(k==='nitrogenio'){
     const c=Math.max(x,0); let q;
     if(c<=10) q=100-8.169*c+0.3059*c**2;
-    else if(c<=60) q=101.9-23.1023*Math.log10(c);
+    // Corrigido: logaritmo natural (com log10 a curva saltava de 49 para 79 em 10 mg/L).
+    else if(c<=60) q=101.9-23.1023*Math.log(c);
     else if(c<=100) q=159.3148*Math.exp(-0.0512842*c);
     else q=1;
     return clampQi(q);
@@ -643,33 +817,45 @@ function cqi(k,v,ctx={}){
 
   return NaN;
 }
-function cor(v){if(v>=79)return'#1b6e2e';if(v>=51)return'#0d4275';if(v>=36)return'#b07d00';if(v>=19)return'#c04a00';return'#a01515';}
+// Calcula o IQA a partir dos nove valores e da altitude. Devolve null se faltar algo.
+function calcIQA(vals,altitude){
+  let iqa=1;const qis={};
+  for(const [k,m] of Object.entries(PESOS)){
+    const q=cqi(k,vals[k],{temp:vals.temperatura,altitude});
+    if(!Number.isFinite(q)) return null;
+    qis[k]=q;iqa*=Math.pow(q,m.w);
+  }
+  return {iqa,qis};
+}
+// Faixas CETESB: 79 < IQA ≤ 100 ótima; 51 < IQA ≤ 79 boa; 36 < IQA ≤ 51 razoável; 19 < IQA ≤ 36 ruim; IQA ≤ 19 muito ruim.
+function cor(v){if(v>79)return'#1b6e2e';if(v>51)return'#0d4275';if(v>36)return'#b07d00';if(v>19)return'#c04a00';return'#a01515';}
 function cl(v){
-  if(v>=79)return{lb:'ÓTIMA',id:'f-ot'};if(v>=51)return{lb:'BOA',id:'f-bo'};
-  if(v>=36)return{lb:'RAZOÁVEL',id:'f-ra'};if(v>=19)return{lb:'RUIM',id:'f-ru'};
+  if(v>79)return{lb:'ÓTIMA',id:'f-ot'};if(v>51)return{lb:'BOA',id:'f-bo'};
+  if(v>36)return{lb:'RAZOÁVEL',id:'f-ra'};if(v>19)return{lb:'RUIM',id:'f-ru'};
   return{lb:'MUITO RUIM',id:'f-mr'};
 }
 
+/* ===================== CALCULADORA ===================== */
 function renderInputs(){
-  const pc=document.getElementById('pc'), ptb=document.getElementById('ptb');
-  pc.innerHTML=''; ptb.innerHTML='';
+  const pc=$('pc'), ptb=$('ptb');
+  let a='',b='';
   Object.entries(PESOS).forEach(([k,m])=>{
-    pc.innerHTML+=`<div class="prow">
-      <div class="ptop"><label>${m.lb}</label>
+    a+=`<div class="prow">
+      <div class="ptop"><label for="i-${k}">${m.lb}</label>
       <span><span class="utag">${m.un}</span><span class="wtag">wi=${m.w.toFixed(2)}</span></span></div>
-      <div class="ib"><input type="number" id="i-${k}" step="any" min="0" placeholder="${m.ph}" oninput="prvw('${k}')">
+      <div class="ib"><input type="number" id="i-${k}" step="any" min="0" inputmode="decimal" placeholder="${m.ph}" oninput="prvw('${k}')">
       <span class="qp" id="p-${k}"></span></div></div>`;
     const bw=(m.w/0.17)*100;
-    ptb.innerHTML+=`<tr><td>${m.lb}</td><td style="font-family:var(--mono)">${m.w.toFixed(2)}</td>
+    b+=`<tr><td>${m.lb}</td><td style="font-family:var(--mono)">${m.w.toFixed(2)}</td>
       <td><div class="bb" style="width:110px"><div class="bf" style="width:${bw}%;background:var(--accent)"></div></div></td></tr>`;
   });
-  document.getElementById('sv-data').value=new Date().toISOString().slice(0,16);
+  pc.innerHTML=a;ptb.innerHTML=b;
 }
 function prvw(k){
-  const inp=document.getElementById(`i-${k}`),pill=document.getElementById(`p-${k}`);
+  const inp=$(`i-${k}`),pill=$(`p-${k}`);
   const v=parseFloat(inp.value);
-  const temp=parseFloat(document.getElementById('i-temperatura')?.value);
-  const altitude=parseFloat(document.getElementById('i-altitude')?.value);
+  const temp=parseFloat($('i-temperatura')?.value);
+  const altitude=parseFloat($('i-altitude')?.value);
   const q=cqi(k,v,{temp,altitude});
   if(!isNaN(v)&&v>=0&&Number.isFinite(q)){
     pill.textContent=`qi=${q.toFixed(0)}`;
@@ -677,222 +863,303 @@ function prvw(k){
     inp.classList.remove('err');
   } else pill.classList.remove('show');
   if(k==='temperatura'){
-    const od=document.getElementById('i-oxigenio');
+    const od=$('i-oxigenio');
     if(od&&od.value!=='') prvw('oxigenio');
   }
 }
+function avisoCampos(tipo,txt){
+  const al=$('alert-campos');
+  if(tipo==='ok'){al.style.background='#e8f3ed';al.style.borderLeftColor='var(--accent)';al.style.color='var(--accent)';}
+  else{al.style.background='#fff8e1';al.style.borderLeftColor='#f9a825';al.style.color='#5d4037';}
+  al.textContent=txt;al.classList.add('show');
+}
 function calcularIQA(){
-  const al=document.getElementById('alert-campos');
-  al.style.background='#fff8e1';al.style.borderLeftColor='#f9a825';al.style.color='#5d4037';
-  al.textContent='⚠ Preencha os 9 parâmetros e a altitude antes de calcular.';al.classList.remove('show');
   const v={};let err=false;
   Object.keys(PESOS).forEach(k=>{
-    const x=parseFloat(document.getElementById(`i-${k}`).value);
-    if(isNaN(x)||x<0){document.getElementById(`i-${k}`).classList.add('err');err=true;}
-    else{document.getElementById(`i-${k}`).classList.remove('err');v[k]=x;}
+    const x=parseFloat($(`i-${k}`).value);
+    if(isNaN(x)||x<0){$(`i-${k}`).classList.add('err');err=true;}
+    else{$(`i-${k}`).classList.remove('err');v[k]=x;}
   });
-  const altitude=parseFloat(document.getElementById('i-altitude').value);
-  if(isNaN(altitude)||altitude<0){document.getElementById('i-altitude').classList.add('err');err=true;}
-  else document.getElementById('i-altitude').classList.remove('err');
-  if(err){al.style.background='#fff8e1';al.style.borderLeftColor='#f9a825';al.style.color='#5d4037';al.textContent='⚠ Preencha os 9 parâmetros e a altitude antes de calcular.';al.classList.add('show');return;}
-
-  let iqa=1;const qis={};
-  Object.entries(PESOS).forEach(([k,m])=>{
-    const q=cqi(k,v[k],{temp:v.temperatura,altitude});
-    qis[k]=q;iqa*=Math.pow(q,m.w);
-  });
-  last={iqa,qis,vals:v,altitude,ts:new Date().toISOString()};
-
+  if(Number.isFinite(v.ph)&&v.ph>14){$('i-ph').classList.add('err');err=true;}
+  const altitude=parseFloat($('i-altitude').value);
+  if(isNaN(altitude)||altitude<0){$('i-altitude').classList.add('err');err=true;}
+  else $('i-altitude').classList.remove('err');
+  if(err){avisoCampos('warn','⚠ Preencha os 9 parâmetros e a altitude com valores válidos antes de calcular.');return;}
+  const r=calcIQA(v,altitude);
+  if(!r){avisoCampos('warn','⚠ Não foi possível calcular com esses valores. Revise os campos.');return;}
+  last={iqa:r.iqa,qis:r.qis,vals:v,altitude,ts:new Date().toISOString()};
+  mostrarResultado(last);
+  avisoCampos('ok','✓ IQA calculado. Use os botões abaixo para salvar, exportar ou gerar laudo.');
+}
+function mostrarResultado(rec){
+  const {iqa,qis,vals:v}=rec;
   const C=cl(iqa),CR=cor(iqa);
-  document.getElementById('iqan').textContent=iqa.toFixed(1);
-  document.getElementById('iqan').style.color=CR;
-  document.getElementById('iqacl').textContent=C.lb;
-  document.getElementById('iqacl').style.color=CR;
-  document.getElementById('iqafm').textContent=`IQA = ∏ qi^wi = ${iqa.toFixed(3)} · Média geométrica ponderada`;
-  document.getElementById('iqadt').textContent=new Date().toLocaleString('pt-BR');
-  document.getElementById('hero').style.background=`linear-gradient(135deg,${CR}08,${CR}1a)`;
-
-  // faixas
-  ['f-ot','f-bo','f-ra','f-ru','f-mr'].forEach(id=>{
-    const el=document.getElementById(id);el.classList.add('dim');el.style.boxShadow='';
-  });
-  const fa=document.getElementById(C.id);
-  fa.classList.remove('dim');fa.style.boxShadow='inset 0 -5px 0 rgba(0,0,0,0.3)';
-
-  // qi table
-  const qib=document.getElementById('qib');qib.innerHTML='';
-  Object.entries(PESOS).forEach(([k,m])=>{
+  $('iqan').textContent=iqa.toFixed(1);$('iqan').style.color=CR;
+  $('iqacl').textContent=C.lb;$('iqacl').style.color=CR;
+  $('iqafm').textContent=`IQA = ∏ qi^wi = ${iqa.toFixed(3)} · Média geométrica ponderada`;
+  $('iqadt').textContent=new Date().toLocaleString('pt-BR');
+  $('hero').style.background=`linear-gradient(135deg,${CR}08,${CR}1a)`;
+  ['f-ot','f-bo','f-ra','f-ru','f-mr'].forEach(id=>{const el=$(id);el.classList.add('dim');el.style.boxShadow='';});
+  const fa=$(C.id);fa.classList.remove('dim');fa.style.boxShadow='inset 0 -5px 0 rgba(0,0,0,0.3)';
+  $('qib').innerHTML=Object.entries(PESOS).map(([k,m])=>{
     const q=qis[k],c2=cor(q),ct=Math.pow(q,m.w);
-    qib.innerHTML+=`<tr><td>${m.lb}</td><td>${v[k]}</td>
+    return `<tr><td>${m.lb}</td><td>${esc(v[k])}</td>
       <td style="color:${c2};font-weight:700">${q.toFixed(1)}</td>
       <td>${m.w.toFixed(2)}</td><td>${ct.toFixed(3)}</td>
       <td><div class="bb"><div class="bf" style="width:${q}%;background:${c2}"></div></div></td></tr>`;
-  });
-
-  // CONAMA
-  renderCONAMA(v, document.getElementById('cnb'));
-  renderCONAMA(v, document.getElementById('lcnb'));
-
-  document.getElementById('rph').style.display='none';
-  document.getElementById('rm').style.display='block';
-  document.getElementById('rm').scrollIntoView({behavior:'smooth',block:'nearest'});
-
-  al.style.background='#e8f3ed';al.style.borderLeftColor='var(--accent)';al.style.color='var(--accent)';
-  al.textContent='✓ IQA calculado. Use os botões abaixo para salvar, exportar ou gerar laudo.';al.classList.add('show');
+  }).join('');
+  renderCONAMA(v,$('cnb'));
+  $('rph').style.display='none';
+  $('rm').style.display='block';
+  $('rm').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
-
 function renderCONAMA(vals,tbody){
-  tbody.innerHTML='';
-  Object.entries(CONAMA).forEach(([k,c])=>{
-    const vl=vals[k];let c2='—',c3='—',st='',bd='';
-    if(c.t==='max'){
-      c2=c.cl2!=null?`≤${c.cl2}`:'N/A';c3=c.cl3!=null?`≤${c.cl3}`:'N/A';
-      if(c.cl2!=null){if(vl<=c.cl2){st='Conforme Cl.2';bd='sok';}else if(c.cl3!=null&&vl<=c.cl3){st='Violação Cl.2';bd='sal';}else{st='Violação Cl.3';bd='svi';}}
-      else{st='N/A';bd='sna';}
+  tbody.innerHTML=Object.entries(CONAMA).map(([k,c])=>{
+    const vl=Number(vals[k]);let c2='—',c3='—',st='',bd='';
+    if(!Number.isFinite(vl)){st='Sem dado';bd='sna';}
+    else if(c.t==='max'){
+      c2=`≤${c.cl2}`;c3=`≤${c.cl3}`;
+      if(vl<=c.cl2){st='Atende Cl.2';bd='sok';}else if(vl<=c.cl3){st='Acima da Cl.2';bd='sal';}else{st='Acima da Cl.3';bd='svi';}
     }else if(c.t==='min'){
-      c2=c.cl2!=null?`≥${c.cl2}`:'N/A';c3=c.cl3!=null?`≥${c.cl3}`:'N/A';
-      if(c.cl2!=null){if(vl>=c.cl2){st='Conforme Cl.2';bd='sok';}else if(c.cl3!=null&&vl>=c.cl3){st='Violação Cl.2';bd='sal';}else{st='Violação Cl.3';bd='svi';}}
-      else{st='N/A';bd='sna';}
+      c2=`≥${c.cl2}`;c3=`≥${c.cl3}`;
+      if(vl>=c.cl2){st='Atende Cl.2';bd='sok';}else if(vl>=c.cl3){st='Abaixo da Cl.2';bd='sal';}else{st='Abaixo da Cl.3';bd='svi';}
     }else if(c.t==='rng'){
       c2=`${c.cl2[0]}–${c.cl2[1]}`;c3=`${c.cl3[0]}–${c.cl3[1]}`;
-      st=vl>=c.cl2[0]&&vl<=c.cl2[1]?'Conforme Cl.2':'Fora da faixa';bd=vl>=c.cl2[0]&&vl<=c.cl2[1]?'sok':'svi';
-    }else{st='N/A';bd='sna';}
-    tbody.innerHTML+=`<tr><td>${c.lb}</td><td style="font-family:var(--mono);font-weight:600">${vl}</td>
+      const ok=vl>=c.cl2[0]&&vl<=c.cl2[1];st=ok?'Atende Cl.2':'Fora da faixa';bd=ok?'sok':'svi';
+    }else{st='N/A';bd='sna';c2='N/A';c3='N/A';}
+    return `<tr><td>${c.lb}</td><td style="font-family:var(--mono);font-weight:600">${Number.isFinite(vl)?esc(vl):'—'}</td>
       <td style="font-family:var(--mono)">${c2}</td><td style="font-family:var(--mono)">${c3}</td>
       <td><span class="cbadge ${bd}">${st}</span></td></tr>`;
-  });
+  }).join('');
 }
-
 function stab(n,el){
-  document.getElementById('tab-si').style.display='none';
-  document.getElementById('tab-cn').style.display='none';
+  $('tab-si').style.display='none';$('tab-cn').style.display='none';
   document.querySelectorAll('.itab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('tab-'+n).style.display='block';el.classList.add('active');
+  $('tab-'+n).style.display='block';el.classList.add('active');
+}
+function limpar(){
+  Object.keys(PESOS).forEach(k=>{
+    const i=$(`i-${k}`);if(i){i.value='';i.classList.remove('err');}
+    const p=$(`p-${k}`);if(p)p.classList.remove('show');
+  });
+  const alt=$('i-altitude');alt.value='';alt.classList.remove('err');
+  $('rph').style.display='block';$('rm').style.display='none';
+  last=null;
+  avisoCampos('ok','Preencha os 9 parâmetros, informe a altitude e clique em Calcular IQA.');
 }
 
-function abrirSalvar(){if(!last){alert('Calcule o IQA primeiro.');return;}document.getElementById('ms').classList.add('show');}
-function fecharMo(id){document.getElementById(id).classList.remove('show');}
-function confirmarSalvar(){
-  const local=document.getElementById('sv-local').value||'Ponto não informado';
-  const resp=document.getElementById('sv-resp').value||'';
-  const data=document.getElementById('sv-data').value||new Date().toISOString().slice(0,16);
-  const obs=document.getElementById('sv-obs').value||'';
-  const lat=parseFloat(document.getElementById('sv-lat').value);
-  const lng=parseFloat(document.getElementById('sv-lng').value);
-  hist.unshift({...last,local,resp,data,obs,lat:Number.isFinite(lat)?lat:null,lng:Number.isFinite(lng)?lng:null,id:Date.now()});
-  localStorage.setItem('iqaf-h',JSON.stringify(hist));
-  fecharMo('ms');renderHist();alert(`✅ Medição salva: ${local}`);
+/* ===================== DADOS DA COLETA (salvar / laudo) ===================== */
+const UFS=['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'];
+const AMBIENTES=['Rio','Córrego / riacho','Lago / lagoa','Baía / área alagada','Reservatório / represa','Nascente','Poço / água subterrânea','Canal / dreno','Outro'];
+let modoColeta='salvar';
+function fecharMo(id){$(id).classList.remove('show');}
+function abrirMo(id){$(id).classList.add('show');}
+function abrirSalvar(){
+  if(!last){toast('Calcule o IQA primeiro.','err');return;}
+  abrirColeta('salvar');
+}
+function abrirColeta(modo){
+  modoColeta=modo;
+  const p=getProfile(),c=last.coleta||{};
+  $('ms-titulo').textContent=modo==='laudo'?'📄 Dados da coleta para o laudo':'💾 Salvar medição';
+  $('ms-sub').textContent=modo==='laudo'?'Informe onde e quando a amostra foi coletada. Esses dados aparecem no laudo.':'Informe onde e quando a amostra foi coletada.';
+  $('ms-ok').textContent=modo==='laudo'?'Gerar laudo':'Salvar';
+  $('sv-local').value=c.local||'';
+  $('sv-corpo').value=c.corpo||'';
+  $('sv-ambiente').value=c.ambiente||'';
+  $('sv-municipio').value=c.municipio||p.municipio||'';
+  $('sv-uf').value=c.uf||p.uf||'';
+  $('sv-resp').value=c.resp||p.nome||'';
+  $('sv-data').value=c.data||agoraLocal();
+  $('sv-obs').value=c.obs||'';
+  $('sv-lat').value=c.lat??'';$('sv-lng').value=c.lng??'';
+  $('sv-geo-msg').textContent='';
+  abrirMo('ms');
+}
+function lerColeta(){
+  const lat=parseFloat($('sv-lat').value),lng=parseFloat($('sv-lng').value);
+  if($('sv-lat').value!==''&&!(lat>=-90&&lat<=90)){toast('Latitude deve estar entre -90 e 90.','err');return null;}
+  if($('sv-lng').value!==''&&!(lng>=-180&&lng<=180)){toast('Longitude deve estar entre -180 e 180.','err');return null;}
+  return {
+    local:$('sv-local').value.trim()||'Ponto não informado',
+    corpo:$('sv-corpo').value.trim(),
+    ambiente:$('sv-ambiente').value,
+    municipio:$('sv-municipio').value.trim(),
+    uf:$('sv-uf').value,
+    resp:$('sv-resp').value.trim(),
+    data:$('sv-data').value||agoraLocal(),
+    obs:$('sv-obs').value.trim(),
+    lat:Number.isFinite(lat)?lat:null,
+    lng:Number.isFinite(lng)?lng:null
+  };
+}
+function usarLocalizacao(){
+  const msg=$('sv-geo-msg');
+  if(!navigator.geolocation){msg.textContent='Este navegador não oferece localização.';return;}
+  msg.textContent='Obtendo localização…';
+  navigator.geolocation.getCurrentPosition(pos=>{
+    $('sv-lat').value=pos.coords.latitude.toFixed(6);
+    $('sv-lng').value=pos.coords.longitude.toFixed(6);
+    msg.textContent=`Coordenadas preenchidas (precisão de cerca de ${Math.round(pos.coords.accuracy)} m).`;
+  },()=>{msg.textContent='Não foi possível obter a localização. Digite as coordenadas manualmente.';},
+  {enableHighAccuracy:true,timeout:15000});
+}
+function confirmarColeta(){
+  const c=lerColeta();if(!c)return;
+  last.coleta=c;
+  fecharMo('ms');
+  if(modoColeta==='laudo'){gerarLaudo(true);return;}
+  const rec={...last,...c,id:novoId()};delete rec.coleta;
+  hist.unshift(rec);persistHist();renderHist();
+  toast(`Medição salva: ${c.local}`);
+  sincronizar(rec);
 }
 
+/* ===================== HISTÓRICO ===================== */
+function ondeTxt(h){
+  return [h.corpo,[h.municipio,h.uf].filter(Boolean).join('/')].filter(Boolean).join(' · ');
+}
 function renderHist(){
-  const hl=document.getElementById('hl');
-  if(hist.length===0){hl.innerHTML='<div class="empt">Nenhuma medição salva ainda.<br>Calcule o IQA e clique em <strong>Salvar Histórico</strong>.</div>';desenharChart();return;}
-  hl.innerHTML='';
-  hist.forEach(h=>{
-    const C=cl(h.iqa),CR=cor(h.iqa);
-    const df=new Date(h.data).toLocaleString('pt-BR');
-    hl.innerHTML+=`<div class="hi" id="hist-${h.id}">
-      <input class="cmpbox" type="checkbox" value="${h.id}" onchange="document.getElementById('hist-${h.id}').classList.toggle('sel',this.checked)">
+  const hl=$('hl');
+  if(hist.length===0){hl.innerHTML='<div class="empt">Nenhuma medição salva ainda.<br>Calcule o IQA e clique em <strong>Salvar Histórico</strong>, ou importe uma planilha.</div>';desenharChart();return;}
+  hl.innerHTML=hist.map(h=>{
+    const C=cl(h.iqa),CR=cor(h.iqa),id=sid(h.id),onde=ondeTxt(h);
+    return `<div class="hi" id="hist-${id}" title="${h.manual?'IQA informado manualmente':'Clique para abrir o laudo'}" onclick="abrirRegistro('${id}')">
+      <input class="cmpbox" type="checkbox" value="${id}" onclick="event.stopPropagation()" onchange="this.closest('.hi').classList.toggle('sel',this.checked)">
       <div class="hdot" style="background:${CR}"></div>
-      <div class="hn"><div class="nm">${h.local}</div><div class="dt">${df}${h.resp?' · '+h.resp:''}</div></div>
+      <div class="hn"><div class="nm">${esc(h.local)} ${h.cloudId?'<span class="tagc" title="Salvo na nuvem">☁</span>':''}${h.manual?'<span class="tagc">manual</span>':''}</div>
+        <div class="dt">${esc(fmtData(h.data))}${h.resp?' · '+esc(h.resp):''}</div>
+        ${onde?`<div class="dt">${esc(onde)}</div>`:''}</div>
       <div><div class="hiqa" style="color:${CR}">${h.iqa.toFixed(1)}</div><div class="hcl" style="color:${CR}">${C.lb}</div></div>
-      <button class="hdel" onclick="delHist(${h.id})">✕</button></div>`;
-  });
+      <button class="hdel" title="Remover" onclick="event.stopPropagation();delHist('${id}')">✕</button></div>`;
+  }).join('');
   desenharChart();
-  if(document.getElementById('page-painel')?.classList.contains('active')) renderPainel();
+  if($('page-painel')?.classList.contains('active')) renderPainel();
 }
-function delHist(id){
-  if(!confirm('Remover medição?'))return;
-  hist=hist.filter(h=>h.id!==id);localStorage.setItem('iqaf-h',JSON.stringify(hist));renderHist();
+function abrirRegistro(id){
+  const h=hist.find(x=>x.id===id);if(!h)return;
+  if(h.manual||!h.qis||!Object.keys(h.qis).length){toast('Este registro tem só o IQA final, sem os nove parâmetros.','err');return;}
+  gerarLaudoDe(h);
 }
+async function delHist(id){
+  const h=hist.find(x=>x.id===id);if(!h)return;
+  if(!confirm(`Remover a medição de "${h.local}"?`+(h.cloudId?' Ela também será apagada da nuvem.':'')))return;
+  if(h.cloudId&&getSession()){
+    try{await api('/measurements/'+encodeURIComponent(h.cloudId),{method:'DELETE'});}
+    catch(e){toast('Não foi possível apagar da nuvem agora. Tente de novo em instantes.','err');return;}
+  }
+  hist=hist.filter(x=>x.id!==id);persistHist();renderHist();
+}
+const COLS_EXPORT=[
+  ['local',h=>h.local],['corpo_hidrico',h=>h.corpo||''],['ambiente',h=>h.ambiente||''],['municipio',h=>h.municipio||''],['uf',h=>h.uf||''],
+  ['data',h=>dataLocalTxt(h.data)],['responsavel',h=>h.resp||''],['latitude',h=>h.lat??''],['longitude',h=>h.lng??''],['altitude_m',h=>h.altitude??''],
+  ['iqa',h=>Math.round(h.iqa*100)/100],['classe',h=>cl(h.iqa).lb],['origem',h=>h.manual?'IQA informado':'calculado'],
+  ['od_mg_L',h=>h.vals?.oxigenio??''],['coliformes_NMP_100mL',h=>h.vals?.coliformes??''],['ph',h=>h.vals?.ph??''],['dbo_mg_L',h=>h.vals?.dbo??''],
+  ['temperatura_C',h=>h.vals?.temperatura??''],['nitrogenio_total_mg_L',h=>h.vals?.nitrogenio??''],['fosforo_total_mg_L',h=>h.vals?.fosforo??''],
+  ['turbidez_UNT',h=>h.vals?.turbidez??''],['solidos_totais_mg_L',h=>h.vals?.solidos??''],['observacoes',h=>h.obs||'']
+];
+// Texto iniciado por = + - @ vira fórmula no Excel; o apóstrofo neutraliza.
+const semFormula=v=>typeof v==='string'&&/^[=+\-@\t\r]/.test(v)?"'"+v:v;
 function exportCSV(){
-  if(hist.length===0){alert('Nenhuma medição salva.');return;}
-  let csv='Local,Data,Responsavel,IQA,Classe,Altitude_m,OD,Coliformes,pH,DBO,Temperatura_Agua,Nitrogenio,Fosforo,Turbidez,Solidos\n';
-  hist.forEach(h=>{
-    const C=cl(h.iqa).lb,v=h.vals||{};
-    csv+=`"${h.local}","${h.data}","${h.resp||''}",${h.iqa.toFixed(2)},${C},${h.altitude??''},${v.oxigenio??''},${v.coliformes??''},${v.ph??''},${v.dbo??''},${v.temperatura??''},${v.nitrogenio??''},${v.fosforo??''},${v.turbidez??''},${v.solidos??''}\n`;
-  });
-  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
-  a.download='iqa-historico.csv';a.click();
+  if(hist.length===0){toast('Nenhuma medição salva.','err');return;}
+  const cel=v=>typeof v==='number'?String(v).replace('.',','):`"${String(semFormula(v)).replace(/"/g,'""')}"`;
+  const linhas=[COLS_EXPORT.map(c=>c[0]).join(';'),...hist.map(h=>COLS_EXPORT.map(c=>cel(c[1](h))).join(';'))];
+  baixar(new Blob(['﻿'+linhas.join('\r\n')],{type:'text/csv;charset=utf-8'}),'iqa-historico.csv');
 }
-
+function exportXLSX(){
+  if(hist.length===0){toast('Nenhuma medição salva.','err');return;}
+  if(!window.XLSX){toast('Biblioteca de planilhas indisponível. Use o CSV.','err');return;}
+  const aoa=[COLS_EXPORT.map(c=>c[0]),...hist.map(h=>COLS_EXPORT.map(c=>semFormula(c[1](h))))];
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(aoa),'historico');
+  XLSX.writeFile(wb,'iqa-historico.xlsx');
+}
+function porData(arr){return [...arr].sort((a,b)=>dt(a.data)-dt(b.data));}
 function desenharChart(){
-  const cv=document.getElementById('chart'),ctx=cv.getContext('2d');
+  const cv=$('chart'),ctx=cv.getContext('2d');
   const W=cv.offsetWidth||580,H=210;cv.width=W;cv.height=H;ctx.clearRect(0,0,W,H);
   if(hist.length<2){
     ctx.fillStyle='#aaa';ctx.font='12px Space Grotesk';ctx.textAlign='center';
     ctx.fillText('Adicione ao menos 2 medições para exibir o gráfico',W/2,H/2);return;
   }
-  const d=[...hist].reverse();
+  const d=porData(hist);
   const pd={l:44,r:14,t:16,b:46};const cw=W-pd.l-pd.r,ch=H-pd.t-pd.b;
   const n=d.length;
   const xs=i=>pd.l+(i/(n-1))*cw;
   const ys=v=>pd.t+ch-(v/100)*ch;
-  // bg faixas
   [[79,100,'#1b6e2e'],[51,79,'#0d4275'],[36,51,'#b07d00'],[19,36,'#c04a00'],[0,19,'#a01515']].forEach(([mn,mx,c])=>{
     ctx.fillStyle=c+'15';ctx.fillRect(pd.l,ys(mx),cw,ys(mn)-ys(mx));
   });
-  // grid
   ctx.strokeStyle='#ddd';ctx.lineWidth=1;
   [0,19,36,51,79,100].forEach(v=>{
     ctx.beginPath();ctx.moveTo(pd.l,ys(v));ctx.lineTo(pd.l+cw,ys(v));ctx.stroke();
     ctx.fillStyle='#999';ctx.font='9px JetBrains Mono';ctx.textAlign='right';ctx.fillText(v,pd.l-5,ys(v)+3);
   });
-  // linha
   ctx.beginPath();ctx.strokeStyle='#1a5c38';ctx.lineWidth=2.5;ctx.lineJoin='round';
   d.forEach((h,i)=>i===0?ctx.moveTo(xs(i),ys(h.iqa)):ctx.lineTo(xs(i),ys(h.iqa)));
   ctx.stroke();
-  // pontos
+  const rotulos=n<=14;
   d.forEach((h,i)=>{
     const x=xs(i),y=ys(h.iqa);
-    ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);
+    ctx.beginPath();ctx.arc(x,y,rotulos?5:3.5,0,Math.PI*2);
     ctx.fillStyle=cor(h.iqa);ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
+    if(!rotulos) return;
     ctx.fillStyle=cor(h.iqa);ctx.font='bold 10px JetBrains Mono';ctx.textAlign='center';ctx.fillText(h.iqa.toFixed(1),x,y-9);
-    const dl=new Date(h.data).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+    const dl=dt(h.data).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
     ctx.fillStyle='#888';ctx.font='9px JetBrains Mono';ctx.fillText(dl,x,H-pd.b+13);
-    const lc=h.local.length>11?h.local.slice(0,11)+'…':h.local;ctx.fillText(lc,x,H-pd.b+24);
+    const nome=String(h.local||'');const lc=nome.length>11?nome.slice(0,11)+'…':nome;ctx.fillText(lc,x,H-pd.b+24);
   });
 }
-
 function exportImg(){
-  if(!last){alert('Calcule o IQA primeiro.');return;}
-  html2canvas(document.getElementById('rm'),{scale:2,backgroundColor:'#ffffff'}).then(cv=>{
-    const a=document.createElement('a');
-    a.href=cv.toDataURL('image/png');
-    a.download=`IQA-${last.iqa.toFixed(1)}-${new Date().toISOString().slice(0,10)}.png`;a.click();
+  if(!last){toast('Calcule o IQA primeiro.','err');return;}
+  if(!window.html2canvas){toast('Exportação de imagem indisponível agora.','err');return;}
+  html2canvas($('rm'),{scale:2,backgroundColor:'#ffffff'}).then(cv=>{
+    cv.toBlob(b=>baixar(b,`IQA-${last.iqa.toFixed(1)}-${agoraLocal(false)}.png`));
   });
 }
 
-function gerarLaudo(){
-  if(!last){alert('Calcule o IQA primeiro.');return;}
-  const now=new Date(),C=cl(last.iqa),CR=cor(last.iqa);
-  document.getElementById('ldt').textContent=now.toLocaleString('pt-BR');
-  document.getElementById('lft2').textContent=now.toLocaleString('pt-BR');
-  document.getElementById('lid').innerHTML=`
-    <div class="lf"><strong>Data/Hora</strong>${now.toLocaleString('pt-BR')}</div>
-    <div class="lf"><strong>Método</strong>IQA — Brown et al. (1970) / CETESB</div>
-    <div class="lf"><strong>Referência Legal</strong>CONAMA 357/2005</div>
-    <div class="lf"><strong>Altitude usada no OD</strong>${last.altitude} m</div>
-    <div class="lf"><strong>Software</strong>IQA-Fácil v2</div>`;
-  const ab=document.getElementById('liab');
+/* ===================== LAUDO ===================== */
+function gerarLaudo(jaTemColeta){
+  if(!last){toast('Calcule o IQA primeiro.','err');return;}
+  if(!jaTemColeta&&!last.coleta){abrirColeta('laudo');return;}
+  gerarLaudoDe({...last,...(last.coleta||{})});
+}
+function gerarLaudoDe(r){
+  const now=new Date(),C=cl(r.iqa),CR=cor(r.iqa),p=getProfile();
+  const campo=(rot,val)=>val?`<div class="lf"><strong>${rot}</strong>${esc(val)}</div>`:'';
+  const coord=Number.isFinite(r.lat)&&Number.isFinite(r.lng)?`${r.lat.toFixed(6)}, ${r.lng.toFixed(6)}`:'';
+  const respLinha=[r.resp||p.nome,p.funcao,p.registro].filter(Boolean).join(' · ');
+  $('ldt').textContent=now.toLocaleString('pt-BR');
+  $('lft2').textContent=now.toLocaleString('pt-BR');
+  $('lid').innerHTML=
+    campo('Local / ponto de coleta',r.local)+
+    campo('Corpo hídrico',[r.corpo,r.ambiente].filter(Boolean).join(' · '))+
+    campo('Município / UF',[r.municipio,r.uf].filter(Boolean).join(' / '))+
+    campo('Coordenadas (lat, long)',coord)+
+    campo('Data e hora da coleta',r.data?fmtData(r.data):'')+
+    campo('Altitude usada no OD',Number.isFinite(r.altitude)?`${r.altitude} m`:'')+
+    campo('Responsável',respLinha)+
+    campo('Instituição',p.instituicao)+
+    campo('Método','IQA — Brown et al. (1970) / CETESB')+
+    campo('Observações',r.obs);
+  const ab=$('liab');
   ab.style.color=CR;ab.style.borderColor=CR;ab.style.background=CR+'10';
-  document.getElementById('liqn').textContent=last.iqa.toFixed(1);document.getElementById('liqn').style.color=CR;
-  document.getElementById('licl').textContent=C.lb;document.getElementById('licl').style.color=CR;
-  document.getElementById('lifm').textContent=`IQA = ∏ qi^wi = ${last.iqa.toFixed(4)}`;
-  const lqib=document.getElementById('lqib');lqib.innerHTML='';
-  Object.entries(PESOS).forEach(([k,m])=>{
-    const q=last.qis[k];
-    lqib.innerHTML+=`<tr><td>${m.lb}</td><td style="font-family:var(--mono)">${last.vals[k]}</td>
+  $('liqn').textContent=r.iqa.toFixed(1);$('liqn').style.color=CR;
+  $('licl').textContent=C.lb;$('licl').style.color=CR;
+  $('lifm').textContent=`IQA = ∏ qi^wi = ${r.iqa.toFixed(4)}`;
+  $('lqib').innerHTML=Object.entries(PESOS).map(([k,m])=>{
+    const q=Number(r.qis[k]);
+    return `<tr><td>${m.lb}</td><td style="font-family:var(--mono)">${esc(r.vals[k])}</td>
       <td style="font-family:var(--mono)">${m.un}</td>
       <td style="font-family:var(--mono);font-weight:700;color:${cor(q)}">${q.toFixed(1)}</td>
       <td style="font-family:var(--mono)">${m.w.toFixed(2)}</td></tr>`;
-  });
-  document.getElementById('modal-laudo').classList.add('show');
+  }).join('');
+  renderCONAMA(r.vals,$('lcnb'));
+  abrirMo('modal-laudo');
 }
 function imprimirLaudo(){
-  const c=document.getElementById('lc');
   const w=window.open('','_blank');
-  w.document.write(`<html><head><title>Laudo IQA</title>
+  if(!w){toast('O navegador bloqueou a janela de impressão. Libere pop-ups para este site.','err');return;}
+  w.document.write(`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Laudo IQA</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <style>body{font-family:'Space Grotesk',sans-serif;margin:28px;color:#1c1b18;font-size:12px;line-height:1.7;}
     table{width:100%;border-collapse:collapse;margin:8px 0;font-size:11px;}
@@ -905,69 +1172,318 @@ function imprimirLaudo(){
     .lf strong{display:block;font-size:9px;text-transform:uppercase;color:#888;}
     .liqab{text-align:center;padding:12px;border:2px solid;border-radius:6px;margin:10px 0;}
     .liqan{font-size:40px;font-weight:700;font-family:'JetBrains Mono',monospace;}
+    .cbadge{font-weight:700}
     .lft{border-top:1px solid #ddd;padding-top:8px;font-size:10px;color:#888;margin-top:14px;}
     @media print{@page{margin:18mm;}}</style></head>
-    <body>${c.innerHTML}</body></html>`);
+    <body>${$('lc').innerHTML}</body></html>`);
   w.document.close();setTimeout(()=>w.print(),700);
 }
 function exportImgLaudo(){
-  html2canvas(document.getElementById('lc'),{scale:2,backgroundColor:'#ffffff'}).then(cv=>{
-    const a=document.createElement('a');a.href=cv.toDataURL('image/png');
-    a.download=`Laudo-IQA-${new Date().toISOString().slice(0,10)}.png`;a.click();
+  if(!window.html2canvas){toast('Exportação de imagem indisponível agora.','err');return;}
+  html2canvas($('lc'),{scale:2,backgroundColor:'#ffffff'}).then(cv=>{
+    cv.toBlob(b=>baixar(b,`Laudo-IQA-${agoraLocal(false)}.png`));
   });
 }
 
+/* ===================== NAVEGAÇÃO ===================== */
 function goPage(n,el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nt button').forEach(b=>b.classList.remove('active'));
-  document.getElementById('page-'+n).classList.add('active');el.classList.add('active');
+  document.querySelectorAll('.nt button[data-pg]').forEach(b=>b.classList.toggle('active',b.dataset.pg===n));
+  $('page-'+n).classList.add('active');
   if(n==='historico')renderHist();
   if(n==='painel')renderPainel();
-}
-function limpar(){
-  Object.keys(PESOS).forEach(k=>{
-    const i=document.getElementById(`i-${k}`);if(i){i.value='';i.classList.remove('err');}
-    const p=document.getElementById(`p-${k}`);if(p)p.classList.remove('show');
-  });
-  const alt=document.getElementById('i-altitude');if(alt){alt.value='';alt.classList.remove('err');}
-  document.getElementById('rph').style.display='block';
-  document.getElementById('rm').style.display='none';
-  last=null;
-  const al=document.getElementById('alert-campos');
-  al.style.background='#e8f3ed';al.style.borderLeftColor='var(--accent)';al.style.color='var(--accent)';
-  al.textContent='Preencha os 9 parâmetros, informe a altitude e clique em Calcular IQA.';al.classList.add('show');
+  window.scrollTo({top:0});
 }
 
+/* ===================== IQA MANUAL ===================== */
 function abrirManual(){
-  document.getElementById('man-data').value=new Date().toISOString().slice(0,10);
-  document.getElementById('mmanual').classList.add('show');
+  $('man-data').value=agoraLocal(false);
+  abrirMo('mmanual');
 }
 function salvarManual(){
-  const local=document.getElementById('man-local').value.trim()||'Ponto não informado';
-  const data=document.getElementById('man-data').value||new Date().toISOString().slice(0,10);
-  const iqa=parseFloat(document.getElementById('man-iqa').value);
-  const obs=document.getElementById('man-obs').value.trim();
-  if(!Number.isFinite(iqa)||iqa<0||iqa>100){alert('Informe um IQA entre 0 e 100.');return;}
-  hist.unshift({id:Date.now(),iqa,local,data,obs,resp:'',manual:true,vals:{},qis:{},ts:new Date().toISOString()});
-  persistHist();fecharMo('mmanual');renderHist();
+  const local=$('man-local').value.trim()||'Ponto não informado';
+  const data=$('man-data').value||agoraLocal(false);
+  const iqa=parseFloat($('man-iqa').value);
+  const obs=$('man-obs').value.trim();
+  if(!Number.isFinite(iqa)||iqa<0||iqa>100){toast('Informe um IQA entre 0 e 100.','err');return;}
+  const rec={id:novoId(),iqa,local,data,obs,resp:'',manual:true,vals:{},qis:{},ts:new Date().toISOString()};
+  hist.unshift(rec);persistHist();fecharMo('mmanual');renderHist();
+  ['man-local','man-iqa','man-obs'].forEach(i=>$(i).value='');
+  toast(`IQA de ${local} adicionado ao histórico.`);
+  sincronizar(rec);
 }
 function compararSelecionados(){
-  const ids=[...document.querySelectorAll('.cmpbox:checked')].map(x=>Number(x.value));
-  if(ids.length<2){alert('Selecione pelo menos 2 medições.');return;}
+  const ids=[...document.querySelectorAll('.cmpbox:checked')].map(x=>x.value);
+  if(ids.length<2){toast('Selecione pelo menos 2 medições.','err');return;}
   const items=ids.map(id=>hist.find(h=>h.id===id)).filter(Boolean);
-  document.getElementById('cmp-out').innerHTML='<div class="cmp-grid">'+items.map(h=>{
+  $('cmp-out').innerHTML='<div class="cmp-grid">'+items.map(h=>{
     const C=cl(h.iqa),CR=cor(h.iqa);
-    return `<div class="cmp-card"><div style="font-size:11px;color:var(--muted)">${new Date(h.data).toLocaleDateString('pt-BR')}</div><strong>${h.local}</strong><div class="cmp-score" style="color:${CR}">${h.iqa.toFixed(1)}</div><div style="font-size:11px;font-weight:700;color:${CR}">${C.lb}</div></div>`;
+    return `<div class="cmp-card"><div style="font-size:11px;color:var(--muted)">${esc(fmtData(h.data,true))}</div><strong>${esc(h.local)}</strong><div class="cmp-score" style="color:${CR}">${h.iqa.toFixed(1)}</div><div style="font-size:11px;font-weight:700;color:${CR}">${C.lb}</div></div>`;
   }).join('')+'</div>';
-  document.getElementById('cmp-out').scrollIntoView({behavior:'smooth',block:'nearest'});
+  $('cmp-out').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
+
+/* ===================== PLANILHA: MODELO E IMPORTAÇÃO ===================== */
+const MODELO_COLS=['local','corpo_hidrico','ambiente','municipio','uf','data','hora','responsavel','latitude','longitude','altitude_m',
+  'od_mg_L','coliformes_NMP_100mL','ph','dbo_mg_L','temperatura_C','nitrogenio_total_mg_L','fosforo_total_mg_L','turbidez_UNT','solidos_totais_mg_L','observacoes'];
+// Linha de demonstração: valores fictícios, os mesmos mostrados como "ex:" nos campos da calculadora.
+function modeloExemplo(){
+  return ['EXEMPLO (apague esta linha)','Nome do rio ou lago','Rio','Nome do município','MT',agoraLocal(false),'09:30','Nome de quem coletou','','',120,
+    8.0,1000,7.2,3.0,25.0,1.0,0.1,10,200,'Linha fictícia, serve só para mostrar o formato'];
+}
+const MODELO_INSTR=[
+  ['IQA-Fácil: como preencher a planilha'],
+  [''],
+  ['1. Preencha a aba "dados", uma linha por amostra. Não mude os nomes da primeira linha.'],
+  ['2. Apague a linha EXEMPLO. Os valores dela são fictícios.'],
+  ['3. São obrigatórios os nove parâmetros e a altitude do ponto (altitude_m), usada para a saturação de oxigênio.'],
+  ['4. Os demais campos são opcionais, mas "local" e "data" ajudam a organizar o histórico.'],
+  ['5. Data no formato AAAA-MM-DD ou DD/MM/AAAA. Hora no formato HH:MM.'],
+  ['6. Decimais com vírgula ou ponto. Latitude e longitude em graus decimais (sul e oeste negativos).'],
+  ['7. Resultados abaixo do limite de detecção (como "<1") não são calculados. Decida o valor a usar e digite o número.'],
+  [''],
+  ['Coluna','Unidade','Obrigatória'],
+  ['local','nome do ponto de coleta','não'],
+  ['corpo_hidrico','nome do rio, córrego, lago','não'],
+  ['ambiente','Rio, Córrego, Lago, Reservatório, Nascente, Poço','não'],
+  ['municipio / uf','texto / sigla','não'],
+  ['data / hora','AAAA-MM-DD / HH:MM','não'],
+  ['responsavel','texto','não'],
+  ['latitude / longitude','graus decimais','não'],
+  ['altitude_m','metros','sim'],
+  ['od_mg_L','mg/L de O2','sim'],
+  ['coliformes_NMP_100mL','NMP/100 mL (termotolerantes)','sim'],
+  ['ph','adimensional','sim'],
+  ['dbo_mg_L','mg/L de O2','sim'],
+  ['temperatura_C','°C (temperatura da água)','sim'],
+  ['nitrogenio_total_mg_L','mg/L de N','sim'],
+  ['fosforo_total_mg_L','mg/L de P','sim'],
+  ['turbidez_UNT','UNT','sim'],
+  ['solidos_totais_mg_L','mg/L','sim'],
+  ['observacoes','texto','não']
+];
+function baixarModelo(tipo){
+  const ex=modeloExemplo();
+  if(tipo==='csv'||!window.XLSX){
+    const cel=v=>typeof v==='number'?String(v).replace('.',','):`"${String(v).replace(/"/g,'""')}"`;
+    const csv=[MODELO_COLS.join(';'),ex.map(cel).join(';')].join('\r\n');
+    baixar(new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'}),'modelo-iqa-facil.csv');
+    return;
+  }
+  const wb=XLSX.utils.book_new();
+  const ws=XLSX.utils.aoa_to_sheet([MODELO_COLS,ex]);
+  ws['!cols']=MODELO_COLS.map(c=>({wch:Math.max(12,c.length+2)}));
+  XLSX.utils.book_append_sheet(wb,ws,'dados');
+  const wi=XLSX.utils.aoa_to_sheet(MODELO_INSTR);wi['!cols']=[{wch:34},{wch:44},{wch:14}];
+  XLSX.utils.book_append_sheet(wb,wi,'instrucoes');
+  XLSX.writeFile(wb,'modelo-iqa-facil.xlsx');
+}
+const normCab=s=>String(s??'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
+// Nomes aceitos no cabeçalho para cada campo (igual ou seguido de "_...").
+const ALIAS={
+  local:['local','ponto','estacao'],corpo:['corpo_hidrico','corpo','rio'],ambiente:['ambiente','tipo'],municipio:['municipio','cidade'],uf:['uf','estado'],
+  data:['data'],hora:['hora'],resp:['responsavel','tecnico','coletor'],lat:['latitude','lat'],lng:['longitude','long','lon','lng'],altitude:['altitude','alt'],
+  oxigenio:['od','oxigenio','o2'],coliformes:['coliformes','colif','e_coli','ecoli'],ph:['ph'],dbo:['dbo','dbo5'],temperatura:['temperatura','temp'],
+  nitrogenio:['nitrogenio','nt','n_total'],fosforo:['fosforo','pt','p_total'],turbidez:['turbidez','turb'],solidos:['solidos','st','residuo'],obs:['observacoes','observacao','obs']
+};
+function mapearCabecalho(cab){
+  const mapa={};
+  cab.forEach((c,i)=>{
+    const h=normCab(c);if(!h)return;
+    for(const [campo,nomes] of Object.entries(ALIAS)){
+      if(mapa[campo]!==undefined) continue;
+      if(nomes.some(a=>h===a||h.startsWith(a+'_'))){mapa[campo]=i;return;}
+    }
+  });
+  return mapa;
+}
+function numBR(v){
+  if(typeof v==='number') return Number.isFinite(v)?v:NaN;
+  let s=String(v??'').trim().replace(/\s/g,'');
+  if(!s) return NaN;
+  if(s.includes(',')) s=s.replace(/\./g,'').replace(',','.');
+  return /^-?\d+(\.\d+)?(e[+-]?\d+)?$/i.test(s)?Number(s):NaN;
+}
+function dataDaPlanilha(vd,vh){
+  let dia='',hora='';
+  if(typeof vd==='number'&&vd>20000&&vd<80000){
+    const d=new Date(Date.UTC(1899,11,30)+Math.round(vd*86400000));
+    dia=`${d.getUTCFullYear()}-${pad2(d.getUTCMonth()+1)}-${pad2(d.getUTCDate())}`;
+    if(vd%1>0.0001) hora=`${pad2(d.getUTCHours())}:${pad2(d.getUTCMinutes())}`;
+  }else{
+    const s=String(vd??'').trim();
+    let m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})(?:[T ](\d{1,2}):(\d{2}))?/);
+    if(m){dia=`${m[1]}-${pad2(m[2])}-${pad2(m[3])}`;if(m[4])hora=`${pad2(m[4])}:${m[5]}`;}
+    else{
+      m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+(\d{1,2}):(\d{2}))?/);
+      if(m){dia=`${m[3]}-${pad2(m[2])}-${pad2(m[1])}`;if(m[4])hora=`${pad2(m[4])}:${m[5]}`;}
+    }
+  }
+  if(!dia||Number.isNaN(new Date(dia+'T00:00').getTime())) return '';
+  if(typeof vh==='number'&&vh>=0&&vh<1){const t=Math.round(vh*1440);hora=`${pad2(Math.floor(t/60)%24)}:${pad2(t%60)}`;}
+  else{const m=String(vh??'').trim().match(/^(\d{1,2})[:h](\d{2})/);if(m&&+m[1]<24&&+m[2]<60)hora=`${pad2(m[1])}:${m[2]}`;}
+  return hora?`${dia}T${hora}`:dia;
+}
+let importados=[];
+const MAX_LINHAS=2000,MAX_BYTES=5*1024*1024;
+function escolherPlanilha(){$('imp-file').value='';$('imp-file').click();}
+function soltarPlanilha(ev){
+  ev.preventDefault();$('imp-drop').classList.remove('over');
+  const f=ev.dataTransfer?.files?.[0];if(f)lerPlanilha(f);
+}
+async function lerPlanilha(file){
+  const out=$('imp-out');
+  const falha=m=>{out.innerHTML=`<div class="alert show" style="display:block">${esc(m)}</div>`;importados=[];};
+  if(!file) return;
+  if(!window.XLSX) return falha('A biblioteca de leitura de planilhas não carregou. Verifique a internet e recarregue a página.');
+  if(!/\.(xlsx|xls|csv|txt)$/i.test(file.name)) return falha('Formato não aceito. Envie um arquivo .xlsx ou .csv.');
+  if(file.size>MAX_BYTES) return falha('Arquivo maior que 5 MB. Divida a planilha em partes menores.');
+  let linhas;
+  try{
+    const buf=await file.arrayBuffer();
+    let wb;
+    if(/\.(csv|txt)$/i.test(file.name)){
+      let txt=new TextDecoder('utf-8',{fatal:false}).decode(buf);
+      if(txt.includes('�')) txt=new TextDecoder('windows-1252').decode(buf);
+      const l1=txt.replace(/^﻿/,'').split(/\r?\n/)[0]||'';
+      const FS=(l1.split(';').length>l1.split(',').length)?';':(l1.split('\t').length>l1.split(',').length?'\t':',');
+      wb=XLSX.read(txt,{type:'string',raw:true,FS});
+    }else wb=XLSX.read(buf,{type:'array'});
+    const nome=wb.SheetNames.find(n=>normCab(n)==='dados')||wb.SheetNames[0];
+    linhas=XLSX.utils.sheet_to_json(wb.Sheets[nome],{header:1,raw:true,defval:'',blankrows:false});
+  }catch(e){return falha('Não foi possível ler o arquivo. Confirme se é uma planilha .xlsx ou .csv válida.');}
+  if(!linhas||linhas.length<2) return falha('A planilha está vazia. Preencha ao menos uma linha abaixo do cabeçalho.');
+  const mapa=mapearCabecalho(linhas[0]);
+  const faltamCols=[...Object.keys(PESOS),'altitude'].filter(k=>mapa[k]===undefined);
+  if(faltamCols.length) return falha('Colunas não encontradas na primeira linha: '+faltamCols.map(k=>PESOS[k]?.lb||'Altitude').join(', ')+'. Baixe o modelo e mantenha os nomes das colunas.');
+  const corpo=linhas.slice(1).filter(l=>l.some(c=>String(c).trim()!==''));
+  if(corpo.length>MAX_LINHAS) return falha(`A planilha tem ${corpo.length} linhas. O limite por arquivo é ${MAX_LINHAS}.`);
+  const txt=(l,campo,max)=>mapa[campo]===undefined?'':String(l[mapa[campo]]??'').trim().slice(0,max);
+  const p=getProfile();
+  importados=corpo.map((l,i)=>{
+    const vals={},faltas=[];
+    Object.keys(PESOS).forEach(k=>{const n=numBR(l[mapa[k]]);if(Number.isFinite(n)&&n>=0)vals[k]=n;else faltas.push(PESOS[k].lb);});
+    if(Number.isFinite(vals.ph)&&vals.ph>14){delete vals.ph;faltas.push('pH (acima de 14)');}
+    const altitude=numBR(l[mapa.altitude]);
+    if(!Number.isFinite(altitude)||altitude<0) faltas.push('Altitude');
+    const lat=mapa.lat===undefined?NaN:numBR(l[mapa.lat]),lng=mapa.lng===undefined?NaN:numBR(l[mapa.lng]);
+    const local=txt(l,'local',160)||`Linha ${i+2}`;
+    const rec={
+      linha:i+2,local,corpo:txt(l,'corpo',120),ambiente:txt(l,'ambiente',40),municipio:txt(l,'municipio',100),
+      uf:txt(l,'uf',2).toUpperCase(),resp:txt(l,'resp',160)||p.nome||'',obs:txt(l,'obs',1000),
+      data:dataDaPlanilha(mapa.data===undefined?'':l[mapa.data],mapa.hora===undefined?'':l[mapa.hora]),
+      lat:lat>=-90&&lat<=90?lat:null,lng:lng>=-180&&lng<=180?lng:null,
+      vals,altitude,faltas,exemplo:/^exemplo/i.test(local),semData:false
+    };
+    if(!rec.data){rec.data=agoraLocal(false);rec.semData=true;}
+    if(!faltas.length){const r=calcIQA(vals,altitude);if(r){rec.iqa=r.iqa;rec.qis=r.qis;}else rec.faltas.push('valores fora do intervalo calculável');}
+    return rec;
+  });
+  renderImportados(file.name);
+}
+function renderImportados(nomeArq){
+  const ok=importados.filter(r=>Number.isFinite(r.iqa)),ruins=importados.length-ok.length;
+  const semData=ok.filter(r=>r.semData).length;
+  let html=`<div class="imp-resumo"><strong>${esc(nomeArq)}</strong>: ${ok.length} linha(s) calculada(s)`+
+    (ruins?`, ${ruins} com dados faltando (não serão salvas)`:'')+'.'+
+    (semData?` ${semData} sem data válida: receberão a data de hoje.`:'')+'</div>';
+  html+='<div class="imp-scroll"><table class="qt imp-t"><thead><tr><th></th><th>Linha</th><th>Local</th><th>Data</th><th>IQA</th><th>Classe</th><th>Situação</th></tr></thead><tbody>';
+  html+=importados.map((r,i)=>{
+    const tem=Number.isFinite(r.iqa),CR=tem?cor(r.iqa):'#999';
+    return `<tr class="${tem?'':'imp-bad'}"><td>${tem?`<input type="checkbox" class="impbox" value="${i}" ${r.exemplo?'':'checked'} onchange="contarImportados()">`:''}</td>
+      <td>${r.linha}</td><td style="font-family:var(--sans)">${esc(r.local)}</td><td>${esc(fmtData(r.data))}${r.semData?' *':''}</td>
+      <td style="color:${CR};font-weight:700">${tem?r.iqa.toFixed(1):'—'}</td><td style="color:${CR};font-weight:700">${tem?cl(r.iqa).lb:'—'}</td>
+      <td style="font-family:var(--sans)">${tem?(r.exemplo?'Linha de exemplo, desmarcada':'Calculado'):'Falta: '+esc(r.faltas.join(', '))}</td></tr>`;
+  }).join('');
+  html+='</tbody></table></div>';
+  html+=`<div class="brow"><button class="btn bprim bsm" id="imp-salvar" onclick="salvarImportados()">Salvar selecionadas</button>
+    <button class="btn bsec bsm" onclick="importados=[];$('imp-out').innerHTML=''">Descartar</button></div>`;
+  $('imp-out').innerHTML=html;contarImportados();
+  $('imp-out').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function contarImportados(){
+  const n=document.querySelectorAll('.impbox:checked').length,b=$('imp-salvar');
+  if(b){b.textContent=`Salvar ${n} no histórico`;b.disabled=!n;}
+}
+function salvarImportados(){
+  const idx=[...document.querySelectorAll('.impbox:checked')].map(x=>Number(x.value));
+  if(!idx.length) return;
+  const ts=new Date().toISOString();
+  const novos=idx.map(i=>importados[i]).filter(r=>r&&Number.isFinite(r.iqa)).map(r=>({
+    id:novoId(),iqa:r.iqa,qis:r.qis,vals:r.vals,altitude:r.altitude,ts,local:r.local,corpo:r.corpo,ambiente:r.ambiente,
+    municipio:r.municipio,uf:r.uf,resp:r.resp,data:r.data,obs:r.obs,lat:r.lat,lng:r.lng
+  }));
+  hist=[...novos,...hist];
+  if(!persistHist()) return;
+  importados=[];
+  $('imp-out').innerHTML=`<div class="alert show" style="display:block;background:#e8f3ed;border-color:#b8d8c4;border-left-color:var(--accent);color:var(--accent)">✓ ${novos.length} medição(ões) salva(s). Veja em <strong>Histórico</strong> e <strong>Meus IQAs</strong>.</div>`;
+  renderHist();
+  toast(`${novos.length} medição(ões) importada(s).`);
+  if(getSession()) syncLocalToCloud().then(renderHist);
+}
+
+/* ===================== PERFIL ===================== */
+const PERFIL_CAMPOS=['nome','instituicao','funcao','registro','municipio','uf','telefone','sobre'];
+function getProfile(){return store.get('iqaf-profile',{})||{};}
+function iniciais(n){return String(n||'').trim().split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0].toUpperCase()).join('');}
+function atualizarNav(){
+  const s=getSession(),p=getProfile();
+  $('auth-btn').style.display=s?'none':'';
+  const b=$('perfil-btn');
+  b.textContent=iniciais(p.nome)||'👤';
+  b.title=s?`Perfil e conta (${s.user?.email||'conectado'})`:'Meu perfil';
+  b.classList.toggle('on',!!s);
+}
+function abrirPerfil(){
+  const p=getProfile(),s=getSession();
+  PERFIL_CAMPOS.forEach(f=>{$('pf-'+f).value=p[f]||'';});
+  $('pf-conta').innerHTML=s
+    ?`<span class="dotok"></span> Conectado como <strong>${esc(s.user?.email||'sua conta')}</strong>. Perfil e medições ficam guardados na nuvem.`
+    :'Você está sem conta. O perfil fica salvo só neste navegador. <button class="auth-link" onclick="fecharMo(\'mperfil\');abrirAuth()">Entrar ou criar conta</button>';
+  $('pf-logado').style.display=s?'flex':'none';
+  $('pf-msg').textContent='';
+  abrirMo('mperfil');
+}
+async function salvarPerfil(){
+  const p={};
+  PERFIL_CAMPOS.forEach(f=>{const v=$('pf-'+f).value.trim();if(v)p[f]=v;});
+  p.updated_at=new Date().toISOString();
+  const s=getSession();if(s?.user?.id)p._uid=s.user.id;
+  store.set('iqaf-profile',p);atualizarNav();
+  if(!s){fecharMo('mperfil');toast('Perfil salvo neste navegador.');return;}
+  $('pf-msg').textContent='Salvando na nuvem…';
+  try{
+    await api('/profile',{method:'PUT',body:JSON.stringify({profile:p})});
+    fecharMo('mperfil');toast('Perfil salvo na sua conta.');
+  }catch(e){
+    $('pf-msg').textContent=e.status===404
+      ?'Perfil salvo neste navegador. Para guardar na nuvem, a API precisa ser atualizada (server.js novo).'
+      :'Perfil salvo neste navegador, mas não foi possível enviar para a nuvem agora.';
+  }
+}
+function perfilDaNuvem(user){
+  const cp=user?.profile||user?.user_metadata?.iqa_profile;
+  const lp=getProfile();
+  if(cp&&Object.keys(cp).length&&(!lp.updated_at||!cp.updated_at||cp.updated_at>=lp.updated_at||lp._uid!==user.id)){
+    store.set('iqaf-profile',{...cp,_uid:user.id});
+  }else if(Object.keys(lp).length&&lp._uid!==user.id&&PERFIL_CAMPOS.some(f=>lp[f])){
+    // Perfil preenchido antes de entrar: passa a pertencer a esta conta.
+    const p={...lp,_uid:user.id};store.set('iqaf-profile',p);
+    api('/profile',{method:'PUT',body:JSON.stringify({profile:p})}).catch(()=>{});
+  }
+  atualizarNav();
+}
+
+/* ===================== CONTA E NUVEM ===================== */
 const API_BASE=window.IQA_API_BASE;
-function getSession(){
-  try{return JSON.parse(localStorage.getItem('iqaf-session')||'null');}catch{return null;}
-}
-function setSession(session){
-  if(session)localStorage.setItem('iqaf-session',JSON.stringify(session));
-  else localStorage.removeItem('iqaf-session');
+const MIN_SENHA=8;
+function getSession(){const s=store.get('iqaf-session',null);return s&&s.access_token?s:null;}
+function setSession(session,user){
+  if(!session){store.del('iqaf-session');return;}
+  const ant=getSession();
+  const exp=Number(session.expires_at)||Math.floor(Date.now()/1000)+Number(session.expires_in||3600);
+  const u=user||session.user||ant?.user||null;
+  store.set('iqaf-session',{access_token:session.access_token,refresh_token:session.refresh_token||'',expires_at:exp,user:u?{id:u.id,email:u.email}:null});
 }
 function appRedirectUrl(){
   return new URL('./', window.location.href.split('#')[0].split('?')[0]).href;
@@ -980,172 +1496,233 @@ function consumeSupabaseAuthRedirect(){
   const error=p.get('error_description')||p.get('error');
   if(error){
     history.replaceState(null,'',window.location.pathname+window.location.search);
-    return {handled:true,error:decodeURIComponent(error.replace(/\+/g,' '))};
+    return {handled:true,error:error.replace(/\+/g,' ')};
   }
   if(!access_token)return {handled:false};
-  const expiresIn=Number(p.get('expires_in')||3600);
-  setSession({
-    access_token,
-    refresh_token:p.get('refresh_token')||'',
-    token_type:p.get('token_type')||'bearer',
-    expires_in:expiresIn,
-    expires_at:Math.floor(Date.now()/1000)+expiresIn
-  });
+  setSession({access_token,refresh_token:p.get('refresh_token')||'',expires_in:Number(p.get('expires_in')||3600)});
   history.replaceState(null,'',window.location.pathname+window.location.search);
-  return {handled:true,confirmed:true};
+  return {handled:true,confirmed:true,recovery:p.get('type')==='recovery'};
+}
+async function chamar(path,opts,token){
+  const headers={'Content-Type':'application/json',...(opts.headers||{})};
+  if(token)headers.Authorization='Bearer '+token;
+  const ctl=new AbortController(),timer=setTimeout(()=>ctl.abort(),70000);
+  try{
+    const r=await fetch(API_BASE+path,{...opts,headers,signal:ctl.signal});
+    const data=await r.json().catch(()=>({}));
+    if(!r.ok){const e=new Error(data.error||'Erro na API');e.status=r.status;throw e;}
+    return data;
+  }catch(e){
+    if(e.status) throw e;
+    const n=new Error('Sem resposta do servidor. Ele pode estar iniciando: aguarde um minuto e tente de novo.');n.status=0;throw n;
+  }finally{clearTimeout(timer);}
+}
+let renovando=null;
+function renovarSessao(){
+  const s=getSession();
+  if(!s?.refresh_token) return Promise.resolve(false);
+  renovando??=chamar('/auth/refresh',{method:'POST',body:JSON.stringify({refresh_token:s.refresh_token})})
+    .then(d=>{if(d.session?.access_token){setSession(d.session,d.user);return true;}return false;})
+    .catch(()=>false).finally(()=>{renovando=null;});
+  return renovando;
+}
+function encerrarSessaoLocal(){
+  setSession(null);
+  // Em computador compartilhado, os dados da conta não ficam para a próxima pessoa.
+  hist=hist.filter(h=>!h.cloudId);persistHist();
+  if(getProfile()._uid) store.del('iqaf-profile');
+  atualizarNav();renderHist();
 }
 async function api(path,opts={}){
-  const session=getSession();
-  const headers={'Content-Type':'application/json',...(opts.headers||{})};
-  if(session?.access_token)headers.Authorization='Bearer '+session.access_token;
-  const r=await fetch(API_BASE+path,{...opts,headers});
-  const data=await r.json().catch(()=>({}));
-  if(!r.ok)throw new Error(data.error||'Erro na API');
-  return data;
-}
-async function pushMeasurement(h){
-  const session=getSession(); if(!session?.access_token)return;
-  const data=await api('/measurements',{
-    method:'POST',
-    body:JSON.stringify({
-      local:h.local||'Ponto não informado',
-      collected_at:new Date(h.data||h.ts||Date.now()).toISOString(),
-      responsible:h.resp||null,
-      notes:h.obs||null,
-      latitude:Number.isFinite(h.lat)?h.lat:null,
-      longitude:Number.isFinite(h.lng)?h.lng:null,
-      altitude_m:Number.isFinite(h.altitude)?h.altitude:null,
-      iqa:Number(h.iqa),
-      class:cl(Number(h.iqa)).lb,
-      manual:!!h.manual,
-      values:h.vals||{},
-      qis:h.qis||{}
-    })
-  });
-  h.cloudId=data.id;
-  localStorage.setItem('iqaf-h',JSON.stringify(hist));
-}
-async function pullMeasurements(){
-  const session=getSession(); if(!session?.access_token)return;
-  const data=await api('/measurements');
-  const cloud=(data.items||[]).map(r=>({
-    id:Number(r.id),cloudId:Number(r.id),iqa:Number(r.iqa),local:r.local,data:r.collected_at,
-    resp:r.responsible||'',obs:r.notes||'',lat:r.latitude,lng:r.longitude,altitude:r.altitude_m,
-    manual:!!r.manual,vals:r.values||{},qis:r.qis||{},ts:r.created_at
-  }));
-  const locals=hist.filter(h=>!h.cloudId);
-  hist=[...cloud,...locals];
-  localStorage.setItem('iqaf-h',JSON.stringify(hist));
-  renderHist();
-}
-async function syncLocalToCloud(){
-  const session=getSession(); if(!session?.access_token)return;
-  for(const h of hist.filter(h=>!h.cloudId)){
-    try{await pushMeasurement(h);}catch(e){console.warn('Sync IQA-Fácil:',e.message)}
+  let s=getSession();
+  const publica=path.startsWith('/auth/')&&path!=='/auth/password';
+  if(s&&!publica&&s.expires_at-Date.now()/1000<90) {await renovarSessao();s=getSession();}
+  try{return await chamar(path,opts,publica?null:s?.access_token);}
+  catch(e){
+    if(e.status===401&&s&&!publica){
+      if(await renovarSessao()) return chamar(path,opts,getSession()?.access_token);
+      encerrarSessaoLocal();
+      const n=new Error('Sua sessão expirou. Entre novamente.');n.status=401;throw n;
+    }
+    throw e;
   }
 }
-async function initCloud(){
-  const session=getSession();
-  const b=document.getElementById('auth-btn');
-  if(session?.access_token){
-    b.textContent='Minha conta';
-    try{await api('/me');await syncLocalToCloud();await pullMeasurements();}
-    catch(e){setSession(null);b.textContent='Entrar';}
-  }else b.textContent='Entrar';
+async function pushMeasurement(h){
+  if(!getSession()||h.cloudId||h._enviando)return;
+  h._enviando=true;
+  try{
+    const coleta={municipio:h.municipio||'',uf:h.uf||'',corpo:h.corpo||'',ambiente:h.ambiente||''};
+    const values={...(h.vals||{})};
+    if(Object.values(coleta).some(Boolean)) values._coleta=coleta;
+    const quando=dt(h.data||h.ts||Date.now());
+    const data=await api('/measurements',{
+      method:'POST',
+      body:JSON.stringify({
+        local:h.local||'Ponto não informado',
+        collected_at:(Number.isNaN(quando.getTime())?new Date():quando).toISOString(),
+        responsible:h.resp||null,
+        notes:h.obs||null,
+        latitude:Number.isFinite(h.lat)?h.lat:null,
+        longitude:Number.isFinite(h.lng)?h.lng:null,
+        altitude_m:Number.isFinite(h.altitude)?h.altitude:null,
+        iqa:Number(h.iqa),
+        class:cl(Number(h.iqa)).lb,
+        manual:!!h.manual,
+        values,
+        qis:h.qis||{}
+      })
+    });
+    if(data?.id!=null) h.cloudId=String(data.id);
+  }finally{delete h._enviando;persistHist();}
 }
-function humanAuthError(msg=''){
-  const m=String(msg||'');
-  if(/rate limit/i.test(m)) return 'Muitas tentativas em pouco tempo. Aguarde alguns minutos. Se sua conta já foi criada, use Entrar.';
-  if(/already registered|already exists/i.test(m)) return 'Este e-mail já possui uma conta. Use Entrar ou Esqueci minha senha.';
-  if(/invalid login|incorrect/i.test(m)) return 'E-mail ou senha incorretos.';
-  return m||'Não foi possível concluir a operação.';
+async function sincronizar(rec){
+  if(!getSession())return;
+  try{await pushMeasurement(rec);renderHist();}
+  catch(e){toast('Salvo neste navegador. O envio para a nuvem será repetido depois.','err');}
+}
+async function pullMeasurements(){
+  if(!getSession())return;
+  const data=await api('/measurements');
+  const cloud=(data.items||[]).filter(r=>Number.isFinite(Number(r.iqa))).map(r=>{
+    const {_coleta,...vals}=r.values||{};
+    return {
+      id:'c'+sid(r.id),cloudId:String(r.id),iqa:Number(r.iqa),local:r.local||'Ponto não informado',data:r.collected_at,
+      resp:r.responsible||'',obs:r.notes||'',lat:r.latitude,lng:r.longitude,altitude:r.altitude_m,
+      municipio:_coleta?.municipio||'',uf:_coleta?.uf||'',corpo:_coleta?.corpo||'',ambiente:_coleta?.ambiente||'',
+      manual:!!r.manual,vals,qis:r.qis||{},ts:r.created_at
+    };
+  });
+  hist=[...cloud,...hist.filter(h=>!h.cloudId)];
+  persistHist();renderHist();
+}
+async function syncLocalToCloud(){
+  if(!getSession())return;
+  for(const h of hist.filter(h=>!h.cloudId)){
+    try{await pushMeasurement(h);}
+    catch(e){console.warn('Sync IQA-Fácil:',e.message);if(e.status===401||e.status===0||e.status===429)break;}
+  }
+}
+async function aposEntrar(user){
+  const s=getSession();
+  if(user&&s){setSession(s,user);}
+  if(user) perfilDaNuvem(user);
+  atualizarNav();
+  await syncLocalToCloud();await pullMeasurements();
+}
+async function initCloud(){
+  atualizarNav();
+  if(!getSession())return;
+  try{const me=await api('/me');await aposEntrar(me.user);}
+  catch(e){if(e.status!==401)console.warn('IQA-Fácil nuvem:',e.message);}
+  atualizarNav();
 }
 function authMessage(type,msg){
-  const err=document.getElementById('auth-error'),ok=document.getElementById('auth-ok');
+  const err=$('auth-error'),ok=$('auth-ok');
   err.classList.remove('show');ok.classList.remove('show');
   if(!msg)return;
   const el=type==='ok'?ok:err;el.textContent=msg;el.classList.add('show');
 }
 function authFields(requirePassword=true){
-  const email=document.getElementById('auth-email').value.trim().toLowerCase();
-  const password=document.getElementById('auth-pass').value;
-  if(!email){authMessage('error','Digite seu e-mail.');document.getElementById('auth-email').focus();return null;}
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){authMessage('error','Digite um e-mail válido.');document.getElementById('auth-email').focus();return null;}
-  if(requirePassword&&!password){authMessage('error','Digite sua senha.');document.getElementById('auth-pass').focus();return null;}
+  const email=$('auth-email').value.trim().toLowerCase();
+  const password=$('auth-pass').value;
+  if(!email){authMessage('error','Digite seu e-mail.');$('auth-email').focus();return null;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){authMessage('error','Digite um e-mail válido.');$('auth-email').focus();return null;}
+  if(requirePassword&&!password){authMessage('error','Digite sua senha.');$('auth-pass').focus();return null;}
   return {email,password};
 }
 function abrirAuth(){
-  const m=document.getElementById('auth-msg');
-  const session=getSession();authMessage(null,null);
-  m.textContent=session?.access_token?'Você está conectado. Suas medições estão sincronizadas na nuvem.':'Entre na sua conta ou crie uma gratuitamente.';
-  document.getElementById('mauth').classList.add('show');
+  if(getSession()){abrirPerfil();return;}
+  authMessage(null,null);
+  abrirMo('mauth');
+}
+let authBusy=false;
+function authTravar(on){
+  authBusy=on;
+  document.querySelectorAll('#mauth .auth-actions button').forEach(b=>b.disabled=on);
 }
 async function loginEmail(){
+  if(authBusy)return;
   const f=authFields(true);if(!f)return;
   try{
-    authMessage('ok','Entrando…');
+    authTravar(true);authMessage('ok','Entrando… na primeira vez o servidor pode levar até um minuto.');
     const data=await api('/auth/login',{method:'POST',body:JSON.stringify(f)});
-    setSession(data.session);document.getElementById('auth-btn').textContent='Minha conta';fecharMo('mauth');
-    await syncLocalToCloud();await pullMeasurements();
-  }catch(e){authMessage('error',humanAuthError(e.message))}
+    setSession(data.session,data.user);$('auth-pass').value='';fecharMo('mauth');
+    toast('Você entrou. Sincronizando suas medições…');
+    await aposEntrar(data.user);
+  }catch(e){authMessage('error',e.message||'Não foi possível entrar.');}
+  finally{authTravar(false);}
 }
-let signupBusy=false;
 async function criarConta(){
-  if(signupBusy)return;
+  if(authBusy)return;
   const f=authFields(true);if(!f)return;
-  if(f.password.length<6){authMessage('error','A senha precisa ter pelo menos 6 caracteres.');document.getElementById('auth-pass').focus();return;}
-  const btn=[...document.querySelectorAll('#mauth button')].find(b=>b.textContent.trim()==='Criar conta');
+  if(f.password.length<MIN_SENHA){authMessage('error',`A senha precisa ter pelo menos ${MIN_SENHA} caracteres.`);$('auth-pass').focus();return;}
   try{
-    signupBusy=true;if(btn){btn.disabled=true;btn.textContent='Criando…';}
-    authMessage('ok','Criando sua conta…');
-    const redirectTo=appRedirectUrl();
-    const data=await api('/auth/signup',{method:'POST',body:JSON.stringify({...f,redirectTo})});
+    authTravar(true);authMessage('ok','Criando sua conta…');
+    const data=await api('/auth/signup',{method:'POST',body:JSON.stringify({...f,redirectTo:appRedirectUrl()})});
+    $('auth-pass').value='';
     if(data.session){
-      setSession(data.session);document.getElementById('auth-btn').textContent='Minha conta';
+      setSession(data.session,data.user);
       authMessage('ok','Conta criada! Sincronizando seus dados…');
-      await syncLocalToCloud();await pullMeasurements();setTimeout(()=>fecharMo('mauth'),650);
-    }else authMessage('ok','Conta criada. Enviamos um e-mail de confirmação. Clique apenas uma vez no link recebido e depois volte para entrar.');
-  }catch(e){
-    authMessage('error',humanAuthError(e.message));
-  }finally{
-    setTimeout(()=>{signupBusy=false;if(btn){btn.disabled=false;btn.textContent='Criar conta';}},8000);
-  }
+      await aposEntrar(data.user);setTimeout(()=>fecharMo('mauth'),650);
+    }else authMessage('ok','Conta criada. Enviamos um e-mail de confirmação. Clique uma vez no link recebido e depois volte para entrar.');
+  }catch(e){authMessage('error',e.message||'Não foi possível criar a conta.');}
+  finally{setTimeout(()=>authTravar(false),4000);}
 }
 async function resetSenha(){
   const f=authFields(false);if(!f)return;
   try{
     await api('/auth/reset',{method:'POST',body:JSON.stringify({email:f.email,redirectTo:appRedirectUrl()})});
-    authMessage('ok','Pronto. Enviamos o link de recuperação para seu e-mail.');
-  }catch(e){authMessage('error',humanAuthError(e.message))}
+    authMessage('ok','Se este e-mail tiver conta, o link para criar uma nova senha chegará em instantes.');
+  }catch(e){authMessage('error',e.message||'Não foi possível enviar o link.');}
 }
-async function sairConta(){
-  setSession(null);document.getElementById('auth-btn').textContent='Entrar';fecharMo('mauth');
+function abrirNovaSenha(){
+  $('ns-1').value='';$('ns-2').value='';$('ns-msg').textContent='';
+  fecharMo('mperfil');abrirMo('msenha');
 }
+async function salvarNovaSenha(){
+  const a=$('ns-1').value,b=$('ns-2').value,msg=$('ns-msg');
+  if(a.length<MIN_SENHA){msg.textContent=`A senha precisa ter pelo menos ${MIN_SENHA} caracteres.`;return;}
+  if(a!==b){msg.textContent='As duas senhas não são iguais.';return;}
+  msg.textContent='Salvando…';
+  try{
+    await api('/auth/password',{method:'POST',body:JSON.stringify({password:a})});
+    fecharMo('msenha');toast('Senha alterada.');
+  }catch(e){
+    msg.textContent=e.status===404?'A troca de senha exige a API atualizada (server.js novo).':(e.message||'Não foi possível alterar a senha.');
+  }
+}
+function sairConta(){
+  const pend=hist.filter(h=>!h.cloudId).length;
+  if(!confirm('Sair da conta neste navegador?'+(pend?` ${pend} medição(ões) ainda não enviada(s) continuarão guardadas aqui.`:' Suas medições continuam guardadas na nuvem.')))return;
+  encerrarSessaoLocal();fecharMo('mperfil');toast('Você saiu da conta.');
+}
+
+/* ===================== PAINEL ===================== */
 function painelFiltrado(){
   let arr=[...hist];
-  const loc=document.getElementById('painel-local')?.value||'';
-  const dias=parseInt(document.getElementById('painel-periodo')?.value||'0',10);
+  const loc=$('painel-local')?.value||'';
+  const dias=parseInt($('painel-periodo')?.value||'0',10);
   if(loc) arr=arr.filter(h=>h.local===loc);
   if(dias){
     const cut=Date.now()-dias*86400000;
-    arr=arr.filter(h=>new Date(h.data).getTime()>=cut);
+    arr=arr.filter(h=>dt(h.data).getTime()>=cut);
   }
-  return arr.sort((a,b)=>new Date(a.data)-new Date(b.data));
+  return porData(arr);
 }
 function renderPainel(){
-  const sel=document.getElementById('painel-local');
+  const sel=$('painel-local');
   if(!sel) return;
   const atual=sel.value;
   const locais=[...new Set(hist.map(h=>h.local).filter(Boolean))].sort();
-  sel.innerHTML='<option value="">Todos os locais</option>'+locais.map(x=>`<option value="${x.replace(/"/g,'&quot;')}">${x}</option>`).join('');
+  sel.innerHTML='<option value="">Todos os locais</option>'+locais.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('');
   if(locais.includes(atual)) sel.value=atual;
 
   const arr=painelFiltrado();
   const vals=arr.map(h=>h.iqa).filter(Number.isFinite);
-  document.getElementById('m-total').textContent=arr.length;
-  document.getElementById('m-media').textContent=vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1):'—';
-  document.getElementById('m-max').textContent=vals.length?Math.max(...vals).toFixed(1):'—';
-  document.getElementById('m-min').textContent=vals.length?Math.min(...vals).toFixed(1):'—';
+  $('m-total').textContent=arr.length;
+  $('m-media').textContent=vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1):'—';
+  $('m-max').textContent=vals.length?Math.max(...vals).toFixed(1):'—';
+  $('m-min').textContent=vals.length?Math.min(...vals).toFixed(1):'—';
   desenharPainelChart(arr);
   renderPainelLocais();
   preencherComparadores();
@@ -1153,7 +1730,7 @@ function renderPainel(){
   renderMapa(arr);
 }
 function desenharPainelChart(arr){
-  const cv=document.getElementById('painel-chart'); if(!cv) return;
+  const cv=$('painel-chart'); if(!cv) return;
   const ctx=cv.getContext('2d'),W=cv.offsetWidth||700,H=280;cv.width=W;cv.height=H;ctx.clearRect(0,0,W,H);
   if(arr.length<2){ctx.fillStyle='#87938b';ctx.font='12px Space Grotesk';ctx.textAlign='center';ctx.fillText('Adicione ao menos 2 medições para visualizar a tendência',W/2,H/2);return;}
   const pd={l:44,r:18,t:18,b:48},cw=W-pd.l-pd.r,ch=H-pd.t-pd.b;
@@ -1161,25 +1738,30 @@ function desenharPainelChart(arr){
   [0,19,36,51,79,100].forEach(v=>{ctx.strokeStyle='#e3ebe6';ctx.beginPath();ctx.moveTo(pd.l,ys(v));ctx.lineTo(pd.l+cw,ys(v));ctx.stroke();ctx.fillStyle='#819087';ctx.font='9px JetBrains Mono';ctx.textAlign='right';ctx.fillText(v,pd.l-6,ys(v)+3);});
   ctx.beginPath();ctx.strokeStyle='#0c6b46';ctx.lineWidth=3;
   arr.forEach((h,i)=>i?ctx.lineTo(xs(i),ys(h.iqa)):ctx.moveTo(xs(i),ys(h.iqa)));ctx.stroke();
-  arr.forEach((h,i)=>{ctx.beginPath();ctx.arc(xs(i),ys(h.iqa),5,0,Math.PI*2);ctx.fillStyle=cor(h.iqa);ctx.fill();ctx.fillStyle='#607068';ctx.font='9px Space Grotesk';ctx.textAlign='center';ctx.fillText(new Date(h.data).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}),xs(i),H-18);});
+  const passo=Math.max(1,Math.ceil(arr.length/12));
+  arr.forEach((h,i)=>{ctx.beginPath();ctx.arc(xs(i),ys(h.iqa),arr.length>30?3:5,0,Math.PI*2);ctx.fillStyle=cor(h.iqa);ctx.fill();
+    if(i%passo) return;
+    ctx.fillStyle='#607068';ctx.font='9px Space Grotesk';ctx.textAlign='center';ctx.fillText(dt(h.data).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}),xs(i),H-18);});
 }
 function gerarInsight(arr){
-  const el=document.getElementById('painel-insight'); if(!el) return;
+  const el=$('painel-insight'); if(!el) return;
   if(arr.length<2){el.innerHTML='<strong>Leitura automática</strong><p>Adicione pelo menos duas medições para interpretar a tendência.</p>';return;}
   const first=arr[0],lastI=arr[arr.length-1],delta=lastI.iqa-first.iqa;
-  let txt=delta>3?`O IQA aumentou ${delta.toFixed(1)} pontos no período selecionado.`:delta<-3?`O IQA caiu ${Math.abs(delta).toFixed(1)} pontos no período selecionado.`:'O IQA ficou relativamente estável no período selecionado.';
-  if(first.qis&&lastI.qis&&Object.keys(first.qis).length&&Object.keys(lastI.qis).length){
-    const diffs=Object.keys(PESOS).map(k=>({k,d:(lastI.qis[k]??0)-(first.qis[k]??0)})).sort((a,b)=>Math.abs(b.d)-Math.abs(a.d));
+  const varios=new Set(arr.map(h=>h.local)).size>1;
+  let txt=delta>3?`O IQA aumentou ${delta.toFixed(1)} pontos entre a primeira e a última medição do período.`:delta<-3?`O IQA caiu ${Math.abs(delta).toFixed(1)} pontos entre a primeira e a última medição do período.`:'O IQA ficou relativamente estável entre a primeira e a última medição do período.';
+  if(varios) txt+=' Atenção: há mais de um local no filtro, então a diferença pode refletir os pontos e não o tempo. Filtre por um local para ler a tendência.';
+  else if(first.qis&&lastI.qis&&Object.keys(first.qis).length&&Object.keys(lastI.qis).length){
+    const diffs=Object.keys(PESOS).filter(k=>Number.isFinite(lastI.qis[k])&&Number.isFinite(first.qis[k])).map(k=>({k,d:lastI.qis[k]-first.qis[k]})).sort((a,b)=>Math.abs(b.d)-Math.abs(a.d));
     if(diffs.length){const top=diffs[0],nome=PESOS[top.k].lb;txt+=` A maior mudança entre os subíndices ocorreu em ${nome} (${top.d>=0?'+':''}${top.d.toFixed(1)} pontos de qi).`;}
   }
-  el.innerHTML='<strong>Leitura automática</strong><p>'+txt+'</p>';
+  el.innerHTML='<strong>Leitura automática</strong><p>'+esc(txt)+'</p>';
 }
 let _iqaMap=null;
 function renderMapa(arr){
-  const wrap=document.getElementById('painel-map-wrap'); if(!wrap) return;
+  const wrap=$('painel-map-wrap'); if(!wrap) return;
   const pts=arr.filter(h=>Number.isFinite(h.lat)&&Number.isFinite(h.lng));
-  if(!pts.length){
-    if(_iqaMap){_iqaMap.remove();_iqaMap=null;}
+  if(_iqaMap){_iqaMap.remove();_iqaMap=null;}
+  if(!pts.length||!window.L){
     wrap.innerHTML='<div class="map-empty">Salve medições com latitude e longitude para visualizar os pontos no mapa.</div>';
     return;
   }
@@ -1190,75 +1772,50 @@ function renderMapa(arr){
   pts.forEach(h=>{
     const c=cor(h.iqa);
     const marker=L.circleMarker([h.lat,h.lng],{radius:9,color:c,fillColor:c,fillOpacity:.78,weight:2}).addTo(_iqaMap);
-    marker.bindPopup(`<strong>${h.local}</strong><br>IQA ${h.iqa.toFixed(1)} · ${cl(h.iqa).lb}<br>${new Date(h.data).toLocaleDateString('pt-BR')}`);
+    const onde=ondeTxt(h);
+    marker.bindPopup(`<strong>${esc(h.local)}</strong><br>${onde?esc(onde)+'<br>':''}IQA ${h.iqa.toFixed(1)} · ${cl(h.iqa).lb}<br>${esc(fmtData(h.data,true))}`);
     bounds.push([h.lat,h.lng]);
   });
   if(bounds.length===1)_iqaMap.setView(bounds[0],13);else _iqaMap.fitBounds(bounds,{padding:[28,28]});
 }
 function renderPainelLocais(){
-  const box=document.getElementById('painel-locais'); if(!box) return;
+  const box=$('painel-locais'); if(!box) return;
   const groups={};hist.forEach(h=>(groups[h.local]??=[]).push(h));
-  const rows=Object.entries(groups).map(([local,a])=>{a.sort((x,y)=>new Date(x.data)-new Date(y.data));const d=a[a.length-1].iqa-a[0].iqa;return {local,n:a.length,last:a[a.length-1].iqa,d};}).sort((a,b)=>b.n-a.n);
-  box.innerHTML=rows.length?rows.map(r=>`<div class="trend-item"><div><div class="name">${r.local}</div><div class="meta">${r.n} medição(ões) · último IQA ${r.last.toFixed(1)}</div></div><div class="trend-delta" style="color:${r.d>=0?'#168447':'#b72932'}">${r.d>=0?'+':''}${r.d.toFixed(1)}</div></div>`).join(''):'<div class="empt">Nenhum local monitorado ainda.</div>';
+  const rows=Object.entries(groups).map(([local,a])=>{a=porData(a);const d=a[a.length-1].iqa-a[0].iqa;return {local,n:a.length,last:a[a.length-1].iqa,d};}).sort((a,b)=>b.n-a.n);
+  box.innerHTML=rows.length?rows.map(r=>`<div class="trend-item"><div><div class="name">${esc(r.local)}</div><div class="meta">${r.n} medição(ões) · último IQA ${r.last.toFixed(1)}</div></div><div class="trend-delta" style="color:${r.n<2?'#999':r.d>=0?'#168447':'#b72932'}">${r.n<2?'—':(r.d>=0?'+':'')+r.d.toFixed(1)}</div></div>`).join(''):'<div class="empt">Nenhum local monitorado ainda.</div>';
 }
 function preencherComparadores(){
-  const a=document.getElementById('cmp-a'),b=document.getElementById('cmp-b');if(!a||!b)return;
-  const opts=hist.map(h=>`<option value="${h.id}">${h.local} · ${new Date(h.data).toLocaleDateString('pt-BR')} · IQA ${h.iqa.toFixed(1)}</option>`).join('');
+  const a=$('cmp-a'),b=$('cmp-b');if(!a||!b)return;
+  const ord=porData(hist);
+  const opts=ord.map(h=>`<option value="${sid(h.id)}">${esc(h.local)} · ${esc(fmtData(h.data,true))} · IQA ${h.iqa.toFixed(1)}</option>`).join('');
   a.innerHTML=opts;b.innerHTML=opts;
-  if(hist.length>1){a.value=hist[hist.length-1].id;b.value=hist[0].id;}
+  if(ord.length>1){a.value=ord[0].id;b.value=ord[ord.length-1].id;}
 }
 function compararAntesDepois(){
-  const A=hist.find(h=>h.id===Number(document.getElementById('cmp-a').value));
-  const B=hist.find(h=>h.id===Number(document.getElementById('cmp-b').value));
+  const A=hist.find(h=>h.id===$('cmp-a').value);
+  const B=hist.find(h=>h.id===$('cmp-b').value);
   if(!A||!B)return;
   const d=B.iqa-A.iqa;
-  let html=`<strong>${A.local} → ${B.local}</strong><br>IQA: ${A.iqa.toFixed(1)} → ${B.iqa.toFixed(1)} (${d>=0?'+':''}${d.toFixed(1)} pontos).`;
+  let html=`<strong>${esc(A.local)} → ${esc(B.local)}</strong><br>IQA: ${A.iqa.toFixed(1)} → ${B.iqa.toFixed(1)} (${d>=0?'+':''}${d.toFixed(1)} pontos).`;
   if(A.qis&&B.qis&&Object.keys(A.qis).length&&Object.keys(B.qis).length){
-    const diffs=Object.keys(PESOS).map(k=>({k,d:(B.qis[k]??0)-(A.qis[k]??0)})).sort((x,y)=>Math.abs(y.d)-Math.abs(x.d)).slice(0,3);
+    const diffs=Object.keys(PESOS).filter(k=>Number.isFinite(B.qis[k])&&Number.isFinite(A.qis[k])).map(k=>({k,d:B.qis[k]-A.qis[k]})).sort((x,y)=>Math.abs(y.d)-Math.abs(x.d)).slice(0,3);
     html+='<br><br><strong>Parâmetros que mais mudaram:</strong><br>'+diffs.map(x=>`${PESOS[x.k].lb}: ${x.d>=0?'+':''}${x.d.toFixed(1)} qi`).join('<br>');
   }
-  document.getElementById('cmp-detail').innerHTML=html;
+  $('cmp-detail').innerHTML=html;
 }
 
-// Mantém compatibilidade: qualquer salvamento passa também pela camada de sincronização.
-const _confirmarSalvar=confirmarSalvar;
-confirmarSalvar=async function(){
-  const before=hist[0]?.id;
-  _confirmarSalvar();
-  const h=hist[0];
-  if(h&&h.id!==before&&window.IQASupabase?.ready){
-    try{await pushMeasurement(h);}catch(e){console.warn(e.message)}
-  }
-}
-const _salvarManual=salvarManual;
-salvarManual=async function(){
-  const before=hist[0]?.id;
-  _salvarManual();
-  const h=hist[0];
-  if(h&&h.id!==before&&window.IQASupabase?.ready){
-    try{await pushMeasurement(h);}catch(e){console.warn(e.message)}
-  }
-}
-const _delHist=delHist;
-delHist=async function(id){
-  const h=hist.find(x=>x.id===id);
-  _delHist(id);
-  if(h?.cloudId&&window.IQASupabase?.ready){
-    try{await api('/measurements/'+h.cloudId,{method:'DELETE'});}catch(e){console.warn(e.message)}
-  }
-}
-
-document.getElementById('mauth').addEventListener('click',e=>{if(e.target===document.getElementById('mauth'))fecharMo('mauth');});
+/* ===================== INÍCIO ===================== */
+document.querySelectorAll('.mo').forEach(m=>m.addEventListener('click',e=>{if(e.target===m&&m.id!=='msenha')fecharMo(m.id);}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.mo.show').forEach(m=>{if(m.id!=='msenha')fecharMo(m.id);});});
+['auth-email','auth-pass'].forEach(i=>$(i).addEventListener('keydown',e=>{if(e.key==='Enter')loginEmail();}));
+$('sv-uf').innerHTML=$('pf-uf').innerHTML='<option value="">UF</option>'+UFS.map(u=>`<option>${u}</option>`).join('');
+$('sv-ambiente').innerHTML='<option value="">Tipo de ambiente (opcional)</option>'+AMBIENTES.map(a=>`<option>${a}</option>`).join('');
 const authReturn=consumeSupabaseAuthRedirect();
-renderInputs();renderHist();
+renderInputs();renderHist();persistHist();
 initCloud().then(()=>{
-  if(authReturn.confirmed){
-    abrirAuth();
-    authMessage('ok','E-mail confirmado. Sua conta está conectada e pronta para sincronizar.');
-  }else if(authReturn.error){
-    abrirAuth();
-    authMessage('error','Não foi possível validar este link: '+authReturn.error);
-  }
+  if(authReturn.recovery){abrirNovaSenha();$('ns-msg').textContent='Link validado. Escolha sua nova senha.';}
+  else if(authReturn.confirmed){toast('E-mail confirmado. Sua conta está conectada.');}
+  else if(authReturn.error){abrirMo('mauth');authMessage('error','Não foi possível validar este link. Peça um novo e tente outra vez.');}
 });
 </script>
 </body>
