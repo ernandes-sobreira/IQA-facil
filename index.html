@@ -6,8 +6,6 @@
 <title>IQA-Fácil · Qualidade da Água</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="./supabase-config.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
@@ -173,6 +171,7 @@ nav{background:rgba(9,72,48,.95);backdrop-filter:blur(16px);color:#fff;padding:0
 #painel-map{height:340px;border-radius:14px;overflow:hidden;border:1px solid var(--border)}
 .map-empty{height:340px;display:grid;place-items:center;color:var(--muted);font-size:12px;background:var(--surface2);border-radius:14px}
 </style>
+<script>window.IQA_API_BASE="https://iqa-facil-api.onrender.com";</script>
 </head>
 <body>
 <nav>
@@ -904,54 +903,52 @@ function compararSelecionados(){
   }).join('')+'</div>';
   document.getElementById('cmp-out').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
+const API_BASE=window.IQA_API_BASE;
+function getSession(){
+  try{return JSON.parse(localStorage.getItem('iqaf-session')||'null');}catch{return null;}
+}
+function setSession(session){
+  if(session)localStorage.setItem('iqaf-session',JSON.stringify(session));
+  else localStorage.removeItem('iqaf-session');
+}
+async function api(path,opts={}){
+  const session=getSession();
+  const headers={'Content-Type':'application/json',...(opts.headers||{})};
+  if(session?.access_token)headers.Authorization='Bearer '+session.access_token;
+  const r=await fetch(API_BASE+path,{...opts,headers});
+  const data=await r.json().catch(()=>({}));
+  if(!r.ok)throw new Error(data.error||'Erro na API');
+  return data;
+}
 async function pushMeasurement(h){
-  if(!window.IQASupabase?.ready) return;
-  const {data:{user}}=await window.iqaSupabase.auth.getUser();
-  if(!user) return;
-  const payload={
-    user_id:user.id,
-    local:h.local||'Ponto não informado',
-    collected_at:new Date(h.data||h.ts||Date.now()).toISOString(),
-    responsible:h.resp||null,
-    notes:h.obs||null,
-    latitude:Number.isFinite(h.lat)?h.lat:null,
-    longitude:Number.isFinite(h.lng)?h.lng:null,
-    altitude_m:Number.isFinite(h.altitude)?h.altitude:null,
-    iqa:Number(h.iqa),
-    class:cl(Number(h.iqa)).lb,
-    manual:!!h.manual,
-    values:h.vals||{},
-    qis:h.qis||{}
-  };
-  const {data,error}=await window.iqaSupabase.from('iqa_measurements').insert(payload).select().single();
-  if(error) throw error;
+  const session=getSession(); if(!session?.access_token)return;
+  const data=await api('/measurements',{
+    method:'POST',
+    body:JSON.stringify({
+      local:h.local||'Ponto não informado',
+      collected_at:new Date(h.data||h.ts||Date.now()).toISOString(),
+      responsible:h.resp||null,
+      notes:h.obs||null,
+      latitude:Number.isFinite(h.lat)?h.lat:null,
+      longitude:Number.isFinite(h.lng)?h.lng:null,
+      altitude_m:Number.isFinite(h.altitude)?h.altitude:null,
+      iqa:Number(h.iqa),
+      class:cl(Number(h.iqa)).lb,
+      manual:!!h.manual,
+      values:h.vals||{},
+      qis:h.qis||{}
+    })
+  });
   h.cloudId=data.id;
   localStorage.setItem('iqaf-h',JSON.stringify(hist));
 }
 async function pullMeasurements(){
-  if(!window.IQASupabase?.ready) return;
-  const {data:{user}}=await window.iqaSupabase.auth.getUser();
-  if(!user) return;
-  const {data,error}=await window.iqaSupabase
-    .from('iqa_measurements')
-    .select('*')
-    .order('collected_at',{ascending:false});
-  if(error) throw error;
-  const cloud=(data||[]).map(r=>({
-    id:Number(r.id),
-    cloudId:Number(r.id),
-    iqa:Number(r.iqa),
-    local:r.local,
-    data:r.collected_at,
-    resp:r.responsible||'',
-    obs:r.notes||'',
-    lat:r.latitude,
-    lng:r.longitude,
-    altitude:r.altitude_m,
-    manual:!!r.manual,
-    vals:r.values||{},
-    qis:r.qis||{},
-    ts:r.created_at
+  const session=getSession(); if(!session?.access_token)return;
+  const data=await api('/measurements');
+  const cloud=(data.items||[]).map(r=>({
+    id:Number(r.id),cloudId:Number(r.id),iqa:Number(r.iqa),local:r.local,data:r.collected_at,
+    resp:r.responsible||'',obs:r.notes||'',lat:r.latitude,lng:r.longitude,altitude:r.altitude_m,
+    manual:!!r.manual,vals:r.values||{},qis:r.qis||{},ts:r.created_at
   }));
   const locals=hist.filter(h=>!h.cloudId);
   hist=[...cloud,...locals];
@@ -959,73 +956,56 @@ async function pullMeasurements(){
   renderHist();
 }
 async function syncLocalToCloud(){
-  if(!window.IQASupabase?.ready) return;
-  const {data:{user}}=await window.iqaSupabase.auth.getUser();
-  if(!user) return;
-  const pending=hist.filter(h=>!h.cloudId);
-  for(const h of pending){
+  const session=getSession(); if(!session?.access_token)return;
+  for(const h of hist.filter(h=>!h.cloudId)){
     try{await pushMeasurement(h);}catch(e){console.warn('Sync IQA-Fácil:',e.message)}
   }
 }
 async function initCloud(){
-  try{
-    const cfg=window.IQA_SUPABASE_CONFIG;
-    if(!cfg||!cfg.url||!cfg.publishableKey){window.IQASupabase={ready:false};return;}
-    window.iqaSupabase=window.supabase.createClient(cfg.url,cfg.publishableKey);
-    window.IQASupabase={ready:true};
-    window.iqaSupabase.auth.onAuthStateChange(async (_event,session)=>{
-      const b=document.getElementById('auth-btn');
-      if(session?.user){
-        b.textContent='Minha conta';
-        await syncLocalToCloud();
-        await pullMeasurements();
-      }else b.textContent='Entrar';
-    });
-    const {data:{session}}=await window.iqaSupabase.auth.getSession();
-    if(session?.user){document.getElementById('auth-btn').textContent='Minha conta';await syncLocalToCloud();await pullMeasurements();}
-  }catch(e){window.IQASupabase={ready:false};console.warn(e)}
+  const session=getSession();
+  const b=document.getElementById('auth-btn');
+  if(session?.access_token){
+    b.textContent='Minha conta';
+    try{await api('/me');await syncLocalToCloud();await pullMeasurements();}
+    catch(e){setSession(null);b.textContent='Entrar';}
+  }else b.textContent='Entrar';
 }
 function abrirAuth(){
   const m=document.getElementById('auth-msg');
-  if(!window.IQASupabase?.ready) m.innerHTML='A configuração do Supabase não foi carregada.';
-  else m.textContent='Entre ou crie uma conta para sincronizar suas medições entre dispositivos.';
+  const session=getSession();
+  m.textContent=session?.access_token?'Você está conectado. Suas medições são sincronizadas com a nuvem.':'Entre ou crie uma conta para sincronizar suas medições entre dispositivos.';
   document.getElementById('mauth').classList.add('show');
 }
 async function loginEmail(){
-  if(!window.IQASupabase?.ready){abrirAuth();return;}
   try{
-    const {error}=await window.iqaSupabase.auth.signInWithPassword({
-      email:document.getElementById('auth-email').value,
-      password:document.getElementById('auth-pass').value
+    const data=await api('/auth/login',{
+      method:'POST',
+      body:JSON.stringify({email:document.getElementById('auth-email').value,password:document.getElementById('auth-pass').value})
     });
-    if(error) throw error;
-    fecharMo('mauth');
+    setSession(data.session);document.getElementById('auth-btn').textContent='Minha conta';fecharMo('mauth');
+    await syncLocalToCloud();await pullMeasurements();
   }catch(e){alert('Não foi possível entrar: '+e.message)}
 }
 async function criarConta(){
-  if(!window.IQASupabase?.ready){abrirAuth();return;}
   try{
-    const {error}=await window.iqaSupabase.auth.signUp({
-      email:document.getElementById('auth-email').value,
-      password:document.getElementById('auth-pass').value,
-      options:{emailRedirectTo:location.origin+location.pathname}
+    const data=await api('/auth/signup',{
+      method:'POST',
+      body:JSON.stringify({email:document.getElementById('auth-email').value,password:document.getElementById('auth-pass').value})
     });
-    if(error) throw error;
-    alert('Conta criada. Se a confirmação por e-mail estiver ativa, confirme o endereço antes de entrar.');
+    if(data.session){setSession(data.session);document.getElementById('auth-btn').textContent='Minha conta';fecharMo('mauth');await syncLocalToCloud();}
+    else alert('Conta criada. Confira seu e-mail para confirmar o cadastro antes de entrar.');
   }catch(e){alert('Não foi possível criar a conta: '+e.message)}
 }
 async function resetSenha(){
-  if(!window.IQASupabase?.ready){abrirAuth();return;}
   const email=document.getElementById('auth-email').value;
   if(!email){alert('Digite seu e-mail primeiro.');return;}
   try{
-    const {error}=await window.iqaSupabase.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});
-    if(error) throw error;
+    await api('/auth/reset',{method:'POST',body:JSON.stringify({email,redirectTo:location.origin+location.pathname})});
     alert('E-mail de recuperação enviado.');
   }catch(e){alert('Não foi possível enviar: '+e.message)}
 }
 async function sairConta(){
-  if(window.IQASupabase?.ready) await window.iqaSupabase.auth.signOut();
+  setSession(null);document.getElementById('auth-btn').textContent='Entrar';fecharMo('mauth');
 }
 function painelFiltrado(){
   let arr=[...hist];
@@ -1150,7 +1130,7 @@ delHist=async function(id){
   const h=hist.find(x=>x.id===id);
   _delHist(id);
   if(h?.cloudId&&window.IQASupabase?.ready){
-    try{await window.iqaSupabase.from('iqa_measurements').delete().eq('id',h.cloudId);}catch(e){console.warn(e.message)}
+    try{await api('/measurements/'+h.cloudId,{method:'DELETE'});}catch(e){console.warn(e.message)}
   }
 }
 
