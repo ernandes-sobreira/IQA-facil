@@ -442,6 +442,7 @@ linear-gradient(135deg,#f0fbf5,#e9f8f2 56%,#edf9fb);color:var(--text);border:1px
           <button class="btn bprim" onclick="loginEmail()">Entrar</button>
           <button class="btn bsec" onclick="criarConta()">Criar conta</button>
         </div>
+        <div style="font-size:10px;color:var(--muted);line-height:1.45;margin-top:9px">Já tentou criar a conta antes? Use <strong>Entrar</strong> primeiro. Repetir o cadastro muitas vezes pode acionar o limite temporário de e-mails do Supabase.</div>
         <div class="auth-foot">
           <button class="auth-link" onclick="resetSenha()">Esqueci minha senha</button>
           <div>
@@ -1027,6 +1028,13 @@ async function initCloud(){
     catch(e){setSession(null);b.textContent='Entrar';}
   }else b.textContent='Entrar';
 }
+function humanAuthError(msg=''){
+  const m=String(msg||'');
+  if(/rate limit/i.test(m)) return 'Muitas tentativas em pouco tempo. Aguarde alguns minutos. Se sua conta já foi criada, use Entrar.';
+  if(/already registered|already exists/i.test(m)) return 'Este e-mail já possui uma conta. Use Entrar ou Esqueci minha senha.';
+  if(/invalid login|incorrect/i.test(m)) return 'E-mail ou senha incorretos.';
+  return m||'Não foi possível concluir a operação.';
+}
 function authMessage(type,msg){
   const err=document.getElementById('auth-error'),ok=document.getElementById('auth-ok');
   err.classList.remove('show');ok.classList.remove('show');
@@ -1054,12 +1062,16 @@ async function loginEmail(){
     const data=await api('/auth/login',{method:'POST',body:JSON.stringify(f)});
     setSession(data.session);document.getElementById('auth-btn').textContent='Minha conta';fecharMo('mauth');
     await syncLocalToCloud();await pullMeasurements();
-  }catch(e){authMessage('error',e.message)}
+  }catch(e){authMessage('error',humanAuthError(e.message))}
 }
+let signupBusy=false;
 async function criarConta(){
+  if(signupBusy)return;
   const f=authFields(true);if(!f)return;
   if(f.password.length<6){authMessage('error','A senha precisa ter pelo menos 6 caracteres.');document.getElementById('auth-pass').focus();return;}
+  const btn=[...document.querySelectorAll('#mauth button')].find(b=>b.textContent.trim()==='Criar conta');
   try{
+    signupBusy=true;if(btn){btn.disabled=true;btn.textContent='Criando…';}
     authMessage('ok','Criando sua conta…');
     const redirectTo='https://ernandes-sobreira.github.io/IQA-facil/';
     const data=await api('/auth/signup',{method:'POST',body:JSON.stringify({...f,redirectTo})});
@@ -1067,15 +1079,19 @@ async function criarConta(){
       setSession(data.session);document.getElementById('auth-btn').textContent='Minha conta';
       authMessage('ok','Conta criada! Sincronizando seus dados…');
       await syncLocalToCloud();await pullMeasurements();setTimeout(()=>fecharMo('mauth'),650);
-    }else authMessage('ok','Conta criada! Confira seu e-mail para confirmar o cadastro e depois entre.');
-  }catch(e){authMessage('error',e.message)}
+    }else authMessage('ok','Conta criada. Enviamos um e-mail de confirmação. Clique apenas uma vez no link recebido e depois volte para entrar.');
+  }catch(e){
+    authMessage('error',humanAuthError(e.message));
+  }finally{
+    setTimeout(()=>{signupBusy=false;if(btn){btn.disabled=false;btn.textContent='Criar conta';}},8000);
+  }
 }
 async function resetSenha(){
   const f=authFields(false);if(!f)return;
   try{
     await api('/auth/reset',{method:'POST',body:JSON.stringify({email:f.email,redirectTo:'https://ernandes-sobreira.github.io/IQA-facil/'})});
     authMessage('ok','Pronto. Enviamos o link de recuperação para seu e-mail.');
-  }catch(e){authMessage('error',e.message)}
+  }catch(e){authMessage('error',humanAuthError(e.message))}
 }
 async function sairConta(){
   setSession(null);document.getElementById('auth-btn').textContent='Entrar';fecharMo('mauth');
