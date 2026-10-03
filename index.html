@@ -969,6 +969,31 @@ function setSession(session){
   if(session)localStorage.setItem('iqaf-session',JSON.stringify(session));
   else localStorage.removeItem('iqaf-session');
 }
+function appRedirectUrl(){
+  return new URL('./', window.location.href.split('#')[0].split('?')[0]).href;
+}
+function consumeSupabaseAuthRedirect(){
+  const raw=window.location.hash.startsWith('#')?window.location.hash.slice(1):'';
+  if(!raw)return {handled:false};
+  const p=new URLSearchParams(raw);
+  const access_token=p.get('access_token');
+  const error=p.get('error_description')||p.get('error');
+  if(error){
+    history.replaceState(null,'',window.location.pathname+window.location.search);
+    return {handled:true,error:decodeURIComponent(error.replace(/\+/g,' '))};
+  }
+  if(!access_token)return {handled:false};
+  const expiresIn=Number(p.get('expires_in')||3600);
+  setSession({
+    access_token,
+    refresh_token:p.get('refresh_token')||'',
+    token_type:p.get('token_type')||'bearer',
+    expires_in:expiresIn,
+    expires_at:Math.floor(Date.now()/1000)+expiresIn
+  });
+  history.replaceState(null,'',window.location.pathname+window.location.search);
+  return {handled:true,confirmed:true};
+}
 async function api(path,opts={}){
   const session=getSession();
   const headers={'Content-Type':'application/json',...(opts.headers||{})};
@@ -1073,7 +1098,7 @@ async function criarConta(){
   try{
     signupBusy=true;if(btn){btn.disabled=true;btn.textContent='Criando…';}
     authMessage('ok','Criando sua conta…');
-    const redirectTo='https://ernandes-sobreira.github.io/IQA-facil/';
+    const redirectTo=appRedirectUrl();
     const data=await api('/auth/signup',{method:'POST',body:JSON.stringify({...f,redirectTo})});
     if(data.session){
       setSession(data.session);document.getElementById('auth-btn').textContent='Minha conta';
@@ -1089,7 +1114,7 @@ async function criarConta(){
 async function resetSenha(){
   const f=authFields(false);if(!f)return;
   try{
-    await api('/auth/reset',{method:'POST',body:JSON.stringify({email:f.email,redirectTo:'https://ernandes-sobreira.github.io/IQA-facil/'})});
+    await api('/auth/reset',{method:'POST',body:JSON.stringify({email:f.email,redirectTo:appRedirectUrl()})});
     authMessage('ok','Pronto. Enviamos o link de recuperação para seu e-mail.');
   }catch(e){authMessage('error',humanAuthError(e.message))}
 }
@@ -1224,7 +1249,17 @@ delHist=async function(id){
 }
 
 document.getElementById('mauth').addEventListener('click',e=>{if(e.target===document.getElementById('mauth'))fecharMo('mauth');});
-renderInputs();renderHist();initCloud();
+const authReturn=consumeSupabaseAuthRedirect();
+renderInputs();renderHist();
+initCloud().then(()=>{
+  if(authReturn.confirmed){
+    abrirAuth();
+    authMessage('ok','E-mail confirmado. Sua conta está conectada e pronta para sincronizar.');
+  }else if(authReturn.error){
+    abrirAuth();
+    authMessage('error','Não foi possível validar este link: '+authReturn.error);
+  }
+});
 </script>
 </body>
 </html>
